@@ -34,14 +34,14 @@ const Homepage = () => {
                             </StyledLink>
                             <StyledLink to="/chooseasguest">
                                 <Button variant="outlined" fullWidth
-                                    sx={{ mt: 2, mb: 3, color: "#7f56da", borderColor: "#7f56da" }}
+                                    sx={{ mt: 2, mb: 3, color: "#D4AF37", borderColor: "#D4AF37" }}
                                 >
                                     Login as Guest
                                 </Button>
                             </StyledLink>
                             <StyledText>
                                 Don't have an account?{' '}
-                                <Link to="/Adminregister" style={{color:"#550080"}}>
+                                <Link to="/Adminregister" style={{color:"#D4AF37"}}>
                                     Sign up
                                 </Link>
                             </StyledText>
@@ -78,7 +78,7 @@ const StyledBox = styled(Box)`
 
 const StyledTitle = styled.h1`
   font-size: 3rem;
-  color: #252525;
+  color: #D4AF37;
   /* font-family: "Manrope"; */
   font-weight: bold;
   padding-top: 0;

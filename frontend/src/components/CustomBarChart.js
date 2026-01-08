@@ -110,22 +110,23 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from "recharts";
 import styled from "styled-components";
 
 const CustomTooltip = styled.div`
-  background-color: #fff;
+  background-color: #FFFFFF;
   border-radius: 4px;
   padding: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.15);
+  border: 1px solid #D4AF37;
 `;
 
 const TooltipText = styled.p`
   margin: 0;
   font-weight: bold;
-  color:#1e1e1e;
+  color: #111111;
 `;
 
 const TooltipMain = styled.h2`
   margin: 0;
   font-weight: bold;
-  color:#000000;
+  color: #D4AF37;
 `;
 
 const CustomTooltipContent = ({ active, payload, dataKey }) => {

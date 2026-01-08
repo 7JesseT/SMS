@@ -9,19 +9,26 @@ import {
 
 const drawerWidth = 240
 
+// THEME: Table cells use gold headers with white text
 export const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.black,
-        color: theme.palette.common.white,
+        backgroundColor: '#D4AF37',
+        color: '#FFFFFF',
+        fontWeight: 700,
     },
     [`&.${tableCellClasses.body}`]: {
         fontSize: 14,
+        color: '#111111',
+        borderBottomColor: 'rgba(212, 175, 55, 0.15)',
     },
 }));
 
 export const StyledTableRow = styled(TableRow)(({ theme }) => ({
     '&:nth-of-type(odd)': {
-        backgroundColor: theme.palette.action.hover,
+        backgroundColor: 'rgba(212, 175, 55, 0.03)',
+    },
+    '&:hover': {
+        backgroundColor: 'rgba(212, 175, 55, 0.08)',
     },
     // hide last border
     '&:last-child td, &:last-child th': {
@@ -29,9 +36,13 @@ export const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
+// THEME: AppBar uses gold background with white text
 export const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
+    backgroundColor: '#D4AF37',
+    color: '#FFFFFF',
+    boxShadow: '0 2px 12px rgba(212, 175, 55, 0.2)',
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
@@ -47,12 +58,15 @@ export const AppBar = styled(MuiAppBar, {
     }),
 }));
 
+// THEME: Drawer uses white background with gold accents
 export const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
         '& .MuiDrawer-paper': {
             position: 'relative',
             whiteSpace: 'nowrap',
             width: drawerWidth,
+            backgroundColor: '#FFFFFF',
+            borderRight: '1px solid rgba(212, 175, 55, 0.15)',
             transition: theme.transitions.create('width', {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.enteringScreen,

@@ -34,9 +34,9 @@ useEffect(() => {
 
 const StyledSpeedDial = styled(SpeedDial)`
   .MuiSpeedDial-fab {
-    background-color: #240439;
+    background-color: #D4AF37;
     &:hover {
-      background-color: #440080;
+      background-color: #B88F2A;
     }
   }
 `;

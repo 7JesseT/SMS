@@ -12,12 +12,21 @@ a {
   display: none;
 }
 
+/* THEME: Gold & White Color Palette */
 :root {
-  --color-bg: #1f1f38;
-  --color-bg-variant: #2c2c6c;
-  --color-primary: #4db5ff;
-  --color-primary-variant: rgba(77, 181, 255, 0.4);
-  --color-light: rgba(255, 255, 255, 0.6);
+  /* Primary Colors */
+  --color-gold: #D4AF37;
+  --color-gold-dark: #B88F2A;
+  --color-white: #FFFFFF;
+  --color-text: #111111;
+  --color-muted: #F7F6F4;
+  
+  /* Legacy support (mapped to new palette) */
+  --color-bg: #F7F6F4;
+  --color-bg-variant: #FFFFFF;
+  --color-primary: #D4AF37;
+  --color-primary-variant: rgba(212, 175, 55, 0.15);
+  --color-light: rgba(17, 17, 17, 0.7);
 }
 
 /* FORM */
@@ -53,27 +62,33 @@ a {
 .registerInput {
   padding: 10px;
   background-color: white;
-  border: none;
+  border: 2px solid #D4AF37;
   border-radius: 10px;
+  transition: all 0.2s ease;
 }
 
 .registerInput:focus {
   outline: none;
+  border-color: #B88F2A;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
 }
 
 .registerButton {
   margin-top: 20px;
   cursor: pointer;
-  background-color: #000000;
+  background-color: #D4AF37;
   color: white;
   padding: 10px;
-  border: none;
+  border: 1px solid #B88F2A;
   border-radius: 10px;
   text-align: center;
+  transition: all 0.2s ease;
+  font-weight: 600;
 }
 
 .registerButton:hover {
-  background-color: #313131;
+  background-color: #B88F2A;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
 @media screen and (max-width: 480px) {

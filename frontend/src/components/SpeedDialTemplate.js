@@ -25,10 +25,10 @@ export default SpeedDialTemplate
 
 const CustomSpeedDial = styled(SpeedDial)`
   .MuiSpeedDial-fab {
-    background-color: #032803;
+    background-color: #D4AF37;
     
     &:hover {
-      background-color: green;
+      background-color: #B88F2A;
     }
   }
 `;

@@ -10,8 +10,10 @@ import { LightPurpleButton } from '../../components/buttonStyles';
 import { registerUser } from '../../redux/userRelated/userHandle';
 import styled from 'styled-components';
 import Popup from '../../components/Popup';
+import goldWhiteTheme from '../../theme/muiTheme';
 
-const defaultTheme = createTheme();
+// DIFF: Using centralized gold & white theme instead of default theme
+const defaultTheme = goldWhiteTheme;
 
 const AdminRegisterPage = () => {
 
@@ -88,10 +90,10 @@ const AdminRegisterPage = () => {
                             alignItems: 'center',
                         }}
                     >
-                        <Typography variant="h4" sx={{ mb: 2, color: "#2c2143" }}>
+                        <Typography variant="h4" sx={{ mb: 2, color: "#D4AF37" }}>
                             Admin Register
                         </Typography>
-                        <Typography variant="h7">
+                        <Typography variant="h7" sx={{ color: "#111111" }}>
                             Create your own school by registering as an admin.
                             <br />
                             You will be able to add students and faculty and
@@ -213,5 +215,9 @@ export default AdminRegisterPage
 const StyledLink = styled(Link)`
   margin-top: 9px;
   text-decoration: none;
-  color: #7f56da;
+  color: #D4AF37;
+
+  &:hover {
+    color: #B88F2A;
+  }
 `;

@@ -9,8 +9,10 @@ import { LightPurpleButton } from '../components/buttonStyles';
 import styled from 'styled-components';
 import { loginUser } from '../redux/userRelated/userHandle';
 import Popup from '../components/Popup';
+import goldWhiteTheme from '../theme/muiTheme';
 
-const defaultTheme = createTheme();
+// DIFF: Using centralized gold & white theme instead of default theme
+const defaultTheme = goldWhiteTheme;
 
 const LoginPage = ({ role }) => {
 
@@ -135,10 +137,10 @@ const LoginPage = ({ role }) => {
                             alignItems: 'center',
                         }}
                     >
-                        <Typography variant="h4" sx={{ mb: 2, color: "#2c2143" }}>
+                        <Typography variant="h4" sx={{ mb: 2, color: "#D4AF37" }}>
                             {role} Login
                         </Typography>
-                        <Typography variant="h7">
+                        <Typography variant="h7" sx={{ color: "#111111" }}>
                             Welcome back! Please enter your details
                         </Typography>
                         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 2 }}>
@@ -236,7 +238,7 @@ const LoginPage = ({ role }) => {
                                 fullWidth
                                 onClick={guestModeHandler}
                                 variant="outlined"
-                                sx={{ mt: 2, mb: 3, color: "#7f56da", borderColor: "#7f56da" }}
+                                sx={{ mt: 2, mb: 3, color: "#D4AF37", borderColor: "#D4AF37" }}
                             >
                                 Login as Guest
                             </Button>

@@ -142,7 +142,7 @@ const ChooseUser = ({ visitor }) => {
 export default ChooseUser;
 
 const StyledContainer = styled.div`
-  background: linear-gradient(to bottom, #411d70, #19118b);
+  background: linear-gradient(to bottom, #D4AF37, #B88F2A);
   height: 120vh;
   display: flex;
   justify-content: center;
@@ -152,16 +152,20 @@ const StyledContainer = styled.div`
 const StyledPaper = styled(Paper)`
   padding: 20px;
   text-align: center;
-  background-color: #1f1f38;
-  color:rgba(255, 255, 255, 0.6);
-  cursor:pointer;
+  background-color: #FFFFFF;
+  color: #111111;
+  cursor: pointer;
+  border: 2px solid #D4AF37;
+  transition: all 0.3s ease;
 
   &:hover {
-    background-color: #2c2c6c;
-    color:white;
+    background-color: #D4AF37;
+    color: #FFFFFF;
+    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.3);
   }
 `;
 
 const StyledTypography = styled.h2`
   margin-bottom: 10px;
+  color: inherit;
 `;

@@ -174,10 +174,16 @@ export default SubjectForm
 const styles = {
     inputField: {
         '& .MuiInputLabel-root': {
-            color: '#838080',
+            color: '#D4AF37',
         },
         '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#838080',
+            borderColor: '#D4AF37',
+        },
+        '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#B88F2A',
+        },
+        '& .Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#B88F2A',
         },
     },
 };
