@@ -1,0 +1,110 @@
+* {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* THEME: Gold & White Color Palette */
+:root {
+  /* Primary Colors */
+  --color-gold: #D4AF37;
+  --color-gold-dark: #B88F2A;
+  --color-white: #FFFFFF;
+  --color-text: #111111;
+  --color-muted: #F7F6F4;
+  
+  /* Legacy support (mapped to new palette) */
+  --color-bg: #F7F6F4;
+  --color-bg-variant: #FFFFFF;
+  --color-primary: #D4AF37;
+  --color-primary-variant: rgba(212, 175, 55, 0.15);
+  --color-light: rgba(17, 17, 17, 0.7);
+}
+
+/* FORM */
+.register {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* color: #ffffff; */
+  /* background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://images.unsplash.com/photo-1510936111840-65e151ad71bb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=890&q=80"); */
+  /* background-color: var(--color-bg);
+  background-size: cover;
+  background-blend-mode: darken; */
+  font-family: "Josefin Sans", sans-serif;
+}
+
+.registerTitle {
+  font-size: 50px;
+}
+
+.registerForm {
+  margin-top: -50px;
+  display: flex;
+  flex-direction: column;
+}
+
+.registerForm>label {
+  margin: 10px 0;
+  color: rgb(0, 0, 0);
+}
+
+.registerInput {
+  padding: 10px;
+  background-color: white;
+  border: 2px solid #D4AF37;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.registerInput:focus {
+  outline: none;
+  border-color: #B88F2A;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.registerButton {
+  margin-top: 20px;
+  cursor: pointer;
+  background-color: #D4AF37;
+  color: white;
+  padding: 10px;
+  border: 1px solid #B88F2A;
+  border-radius: 10px;
+  text-align: center;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+.registerButton:hover {
+  background-color: #B88F2A;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+@media screen and (max-width: 480px) {
+  .register {
+    background-position: right;
+  }
+
+  .registerInput {
+    font-size: 15px;
+    padding: 15px;
+    border-radius: 8px;
+  }
+
+  .registerButton {
+    font-size: 16px;
+    padding: 20px;
+    border-radius: 12px;
+  }
+}
