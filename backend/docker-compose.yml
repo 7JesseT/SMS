@@ -1,0 +1,20 @@
+services:
+  backend:
+    build: .
+    ports:
+      - "10000:10000"
+    # Load environment from host .env
+    env_file:
+      - .env
+    environment:
+      # Ensure environment variables are present
+      - MONGO_URI=${MONGO_URI}
+      - JWT_SECRET=${JWT_SECRET:-SuperSecretJWT123}
+      - PORT=${PORT:-10000}
+      - NODE_ENV=${NODE_ENV:-production}
+    restart: unless-stopped
+    volumes:
+      # Mount source code for development (hot reload with nodemon)
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npx nodemon index.js
