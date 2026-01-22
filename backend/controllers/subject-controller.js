@@ -59,19 +59,6 @@ const classSubjects = async (req, res) => {
     }
 };
 
-const freeSubjectList = async (req, res) => {
-    try {
-        let subjects = await Subject.find({ sclassName: req.params.id, teacher: { $exists: false } });
-        if (subjects.length > 0) {
-            res.send(subjects);
-        } else {
-            res.send({ message: "No subjects found" });
-        }
-    } catch (err) {
-        res.status(500).json(err);
-    }
-};
-
 const getSubjectDetail = async (req, res) => {
     try {
         let subject = await Subject.findById(req.params.id);
@@ -116,49 +103,5 @@ const deleteSubject = async (req, res) => {
     }
 };
 
-const deleteSubjects = async (req, res) => {
-    try {
-        const deletedSubjects = await Subject.deleteMany({ school: req.params.id });
 
-        // Set the teachSubject field to null in teachers
-        await Teacher.updateMany(
-            { teachSubject: { $in: deletedSubjects.map(subject => subject._id) } },
-            { $unset: { teachSubject: "" }, $unset: { teachSubject: null } }
-        );
-
-        // Set examResult and attendance to null in all students
-        await Student.updateMany(
-            {},
-            { $set: { examResult: null, attendance: null } }
-        );
-
-        res.send(deletedSubjects);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-};
-
-const deleteSubjectsByClass = async (req, res) => {
-    try {
-        const deletedSubjects = await Subject.deleteMany({ sclassName: req.params.id });
-
-        // Set the teachSubject field to null in teachers
-        await Teacher.updateMany(
-            { teachSubject: { $in: deletedSubjects.map(subject => subject._id) } },
-            { $unset: { teachSubject: "" }, $unset: { teachSubject: null } }
-        );
-
-        // Set examResult and attendance to null in all students
-        await Student.updateMany(
-            {},
-            { $set: { examResult: null, attendance: null } }
-        );
-
-        res.send(deletedSubjects);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-};
-
-
-module.exports = { subjectCreate, freeSubjectList, classSubjects, getSubjectDetail, deleteSubjectsByClass, deleteSubjects, deleteSubject, allSubjects };
+module.exports = { subjectCreate, classSubjects, getSubjectDetail, deleteSubject, allSubjects };

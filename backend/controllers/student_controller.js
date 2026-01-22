@@ -100,32 +100,6 @@ const deleteStudent = async (req, res) => {
     }
 }
 
-const deleteStudents = async (req, res) => {
-    try {
-        const result = await Student.deleteMany({ school: req.params.id })
-        if (result.deletedCount === 0) {
-            res.send({ message: "No students found to delete" })
-        } else {
-            res.send(result)
-        }
-    } catch (error) {
-        res.status(500).json(err);
-    }
-}
-
-const deleteStudentsByClass = async (req, res) => {
-    try {
-        const result = await Student.deleteMany({ sclassName: req.params.id })
-        if (result.deletedCount === 0) {
-            res.send({ message: "No students found to delete" })
-        } else {
-            res.send(result)
-        }
-    } catch (error) {
-        res.status(500).json(err);
-    }
-}
-
 const updateStudent = async (req, res) => {
     try {
         if (req.body.password) {
@@ -277,11 +251,9 @@ module.exports = {
     studentLogIn,
     getStudents,
     getStudentDetail,
-    deleteStudents,
     deleteStudent,
     updateStudent,
     studentAttendance,
-    deleteStudentsByClass,
     updateExamResult,
 
     clearAllStudentsAttendanceBySubject,

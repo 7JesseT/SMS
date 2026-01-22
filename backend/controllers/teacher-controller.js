@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
 const Teacher = require('../models/teacherSchema.js');
 const Subject = require('../models/subjectSchema.js');
 
@@ -87,13 +88,35 @@ const getTeacherDetail = async (req, res) => {
 const updateTeacherSubject = async (req, res) => {
     const { teacherId, teachSubject } = req.body;
     try {
+        // Check if teachSubject is a valid ObjectId or a subject name
+        let subjectId = teachSubject;
+        
+        // If it's not a valid ObjectId format, search by subject name
+        if (!mongoose.Types.ObjectId.isValid(teachSubject)) {
+            const subject = await Subject.findOne({ subName: teachSubject });
+            if (!subject) {
+                return res.status(404).json({ message: `Subject '${teachSubject}' not found` });
+            }
+            subjectId = subject._id;
+        } else {
+            // Verify the subject exists
+            const subject = await Subject.findById(teachSubject);
+            if (!subject) {
+                return res.status(404).json({ message: 'Subject not found' });
+            }
+        }
+
         const updatedTeacher = await Teacher.findByIdAndUpdate(
             teacherId,
-            { teachSubject },
+            { teachSubject: subjectId },
             { new: true }
         );
 
-        await Subject.findByIdAndUpdate(teachSubject, { teacher: updatedTeacher._id });
+        if (!updatedTeacher) {
+            return res.status(404).json({ message: 'Teacher not found' });
+        }
+
+        await Subject.findByIdAndUpdate(subjectId, { teacher: updatedTeacher._id });
 
         res.send(updatedTeacher);
     } catch (error) {
@@ -111,54 +134,6 @@ const deleteTeacher = async (req, res) => {
         );
 
         res.send(deletedTeacher);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-};
-
-const deleteTeachers = async (req, res) => {
-    try {
-        const deletionResult = await Teacher.deleteMany({ school: req.params.id });
-
-        const deletedCount = deletionResult.deletedCount || 0;
-
-        if (deletedCount === 0) {
-            res.send({ message: "No teachers found to delete" });
-            return;
-        }
-
-        const deletedTeachers = await Teacher.find({ school: req.params.id });
-
-        await Subject.updateMany(
-            { teacher: { $in: deletedTeachers.map(teacher => teacher._id) }, teacher: { $exists: true } },
-            { $unset: { teacher: "" }, $unset: { teacher: null } }
-        );
-
-        res.send(deletionResult);
-    } catch (error) {
-        res.status(500).json(error);
-    }
-};
-
-const deleteTeachersByClass = async (req, res) => {
-    try {
-        const deletionResult = await Teacher.deleteMany({ sclassName: req.params.id });
-
-        const deletedCount = deletionResult.deletedCount || 0;
-
-        if (deletedCount === 0) {
-            res.send({ message: "No teachers found to delete" });
-            return;
-        }
-
-        const deletedTeachers = await Teacher.find({ sclassName: req.params.id });
-
-        await Subject.updateMany(
-            { teacher: { $in: deletedTeachers.map(teacher => teacher._id) }, teacher: { $exists: true } },
-            { $unset: { teacher: "" }, $unset: { teacher: null } }
-        );
-
-        res.send(deletionResult);
     } catch (error) {
         res.status(500).json(error);
     }
@@ -199,7 +174,5 @@ module.exports = {
     getTeacherDetail,
     updateTeacherSubject,
     deleteTeacher,
-    deleteTeachers,
-    deleteTeachersByClass,
     teacherAttendance
 };
