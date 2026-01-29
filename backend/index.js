@@ -22,9 +22,16 @@ if (!MONGO_URI) {
 
 app.use(express.json({ limit: '10mb' }))
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://sms-15wv.onrender.com'],
+    origin: [
+        'http://localhost:5173', 
+        'http://localhost:3000',
+        'http://localhost:5174',
+        'https://sms-15wv.onrender.com',
+        'https://school-management-7b79f.web.app',
+        'https://school-management-7b79f.firebaseapp.com'
+    ],
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
