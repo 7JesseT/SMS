@@ -55,6 +55,7 @@ const navigationItems: NavItem[] = [
   { label: 'Dashboard', path: '/student/dashboard', icon: <Dashboard />, roles: ['student'] },
   { label: 'My Grades', path: '/student/grades', icon: <Grade />, roles: ['student'] },
   { label: 'Attendance', path: '/student/attendance', icon: <EventNote />, roles: ['student'] },
+  { label: 'My Subjects', path: '/student/subjects', icon: <MenuBook />, roles: ['student'] },
   { label: 'Notices', path: '/student/notices', icon: <Announcement />, roles: ['student'] },
   { label: 'Complaints', path: '/student/complaints', icon: <Feedback />, roles: ['student'] },
   { label: 'Profile', path: '/student/profile', icon: <Person />, roles: ['student'] },

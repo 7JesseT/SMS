@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AppLayout } from '../components/common/Layout';
 
@@ -7,6 +7,8 @@ import { AppLayout } from '../components/common/Layout';
 import LandingPage from '../pages/LandingPage';
 import LoginPage from '../pages/LoginPage';
 import NotFoundPage from '../pages/NotFoundPage';
+import StudentLoginPage from '../pages/student/StudentLoginPage';
+import StudentRegisterPage from '../pages/student/StudentRegisterPage';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -31,6 +33,7 @@ import StudentAttendancePage from '../pages/student/AttendancePage';
 import StudentNoticesPage from '../pages/student/NoticesPage';
 import StudentComplaintsPage from '../pages/student/ComplaintsPage';
 import StudentProfilePage from '../pages/student/ProfilePage';
+import StudentSubjectsPage from '../pages/student/SubjectsPage';
 
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
@@ -48,7 +51,17 @@ const AppRouter: React.FC = () => {
             isAuthenticated ? (
               <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
             ) : (
-              <LoginPage />
+              <StudentLoginPage />
+            )
+          } 
+        />
+        <Route 
+          path="/register" 
+          element={
+            isAuthenticated ? (
+              <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
+            ) : (
+              <StudentRegisterPage />
             )
           } 
         />
@@ -92,13 +105,14 @@ const AppRouter: React.FC = () => {
           path="/student"
           element={
             <ProtectedRoute allowedRoles={['Student']}>
-              <AppLayout />
+              <Outlet />
             </ProtectedRoute>
           }
         >
           <Route path="dashboard" element={<StudentDashboard />} />
           <Route path="grades" element={<StudentGradesPage />} />
           <Route path="attendance" element={<StudentAttendancePage />} />
+          <Route path="subjects" element={<StudentSubjectsPage />} />
           <Route path="notices" element={<StudentNoticesPage />} />
           <Route path="complaints" element={<StudentComplaintsPage />} />
           <Route path="profile" element={<StudentProfilePage />} />

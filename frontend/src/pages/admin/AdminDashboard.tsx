@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Grid, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
+import Grid from "@mui/material/Grid";
 import {
   People,
   School,
@@ -41,7 +42,7 @@ const AdminDashboard: React.FC = () => {
 
       <Grid container spacing={3}>
         {/* Statistics Cards */}
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <StatsCard
             title="Total Students"
             value={totalStudents}
@@ -50,7 +51,7 @@ const AdminDashboard: React.FC = () => {
             trend={{ value: 12, isPositive: true }}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <StatsCard
             title="Total Teachers"
             value={totalTeachers}
@@ -59,7 +60,7 @@ const AdminDashboard: React.FC = () => {
             trend={{ value: 5, isPositive: true }}
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <StatsCard
             title="Total Classes"
             value={totalClasses}
@@ -67,7 +68,7 @@ const AdminDashboard: React.FC = () => {
             color="info"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <StatsCard
             title="Total Subjects"
             value={totalSubjects}
@@ -75,7 +76,7 @@ const AdminDashboard: React.FC = () => {
             color="warning"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <StatsCard
             title="Active Complaints"
             value={activeComplaints}
@@ -84,7 +85,7 @@ const AdminDashboard: React.FC = () => {
             subtitle="Pending resolution"
           />
         </Grid>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <StatsCard
             title="Recent Notices"
             value={recentNotices}
@@ -95,7 +96,7 @@ const AdminDashboard: React.FC = () => {
         </Grid>
 
         {/* Recent Activity Section */}
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" fontWeight={600} gutterBottom>
               Recent Notices
@@ -121,7 +122,7 @@ const AdminDashboard: React.FC = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" fontWeight={600} gutterBottom>
               Pending Complaints

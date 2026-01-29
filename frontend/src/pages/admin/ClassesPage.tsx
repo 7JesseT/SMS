@@ -56,8 +56,8 @@ const ClassesPage: React.FC = () => {
       <DataTable columns={columns} data={paginated} actions={actions} sortColumn={sortColumn} sortDirection={sortDirection} onSort={handleSort} page={page} rowsPerPage={rowsPerPage} totalRows={filtered.length} onPageChange={setPage} onRowsPerPageChange={setRowsPerPage} />
       <FormDialog open={openForm} title={selected ? 'Edit' : 'Add'} onClose={() => setOpenForm(false)} onSubmit={handleSubmit(handleSave)}>
         <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid item xs={12}><FormField name="sclassName" control={control} label="Class Name" /></Grid>
-          <Grid item xs={12}><FormField name="description" control={control} label="Description" multiline rows={3} /></Grid>
+          <Grid size={{ xs: 12 }}><FormField name="sclassName" control={control} label="Class Name" /></Grid>
+          <Grid size={{ xs: 12 }}><FormField name="description" control={control} label="Description" multiline rows={3} /></Grid>
         </Grid>
       </FormDialog>
       <ConfirmDialog open={openDelete} title="Delete" message={`Delete ${selected?.sclassName}?`} onConfirm={() => { setClasses(classes.filter(c => c._id !== selected?._id)); setOpenDelete(false); }} onCancel={() => setOpenDelete(false)} confirmColor="error" />

@@ -20,6 +20,7 @@ import {
   Logout,
   Settings,
 } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { useNotifications } from '../../../context/NotificationContext';
 import { useSidebar } from '../../../context/SidebarContext';
@@ -30,6 +31,7 @@ const Header: React.FC = () => {
   const { notifications, markAsRead } = useNotifications();
   const { toggleSidebar } = useSidebar();
   const isMobile = useMediaQuery('(max-width:960px)');
+  const navigate = useNavigate();
 
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [anchorElNotif, setAnchorElNotif] = useState<null | HTMLElement>(null);
@@ -55,6 +57,7 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     handleCloseUserMenu();
     logout();
+    navigate('/');
   };
 
   const handleNotificationClick = (id: string) => {

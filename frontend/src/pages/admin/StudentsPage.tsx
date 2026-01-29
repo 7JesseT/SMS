@@ -287,16 +287,16 @@ const StudentsPage: React.FC = () => {
         maxWidth="md"
       >
         <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <FormField name="name" control={control} label="Full Name" />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <FormField name="email" control={control} label="Email" type="email" />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <FormField name="rollNum" control={control} label="Roll Number" type="number" />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <SelectField 
               name="sclassName" 
               control={control} 
@@ -304,7 +304,7 @@ const StudentsPage: React.FC = () => {
               options={classOptions}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <SelectField 
               name="gender" 
               control={control} 
@@ -315,13 +315,13 @@ const StudentsPage: React.FC = () => {
               ]}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <DateField name="dateOfBirth" control={control} label="Date of Birth" />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <FormField name="contactNumber" control={control} label="Contact Number" />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <FormField 
               name="password" 
               control={control} 
@@ -330,13 +330,13 @@ const StudentsPage: React.FC = () => {
               placeholder={selectedStudent ? "Leave blank to keep current" : ""}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <FormField name="guardianName" control={control} label="Guardian Name" />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <FormField name="guardianContact" control={control} label="Guardian Contact" />
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <FormField 
               name="address" 
               control={control} 

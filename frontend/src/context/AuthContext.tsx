@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import type { ReactNode } from 'react';
 import type { AuthContextType, AuthUser, LoginCredentials, UserRole } from '../types';
+import { studentApi } from '../services/api';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -23,22 +24,41 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (credentials: LoginCredentials): Promise<void> => {
     setIsLoading(true);
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      if (credentials.role === 'Student') {
+        // Call real student login API
+        const response = await studentApi.login({
+          rollNum: parseInt(credentials.email), // Using email field for rollNum
+          studentName: credentials.password.split(':')[0] || '', // Extract name from password field
+          password: credentials.password.split(':')[1] || credentials.password,
+        });
 
-      // Mock authentication logic
-      const mockUser: AuthUser = {
-        id: credentials.email,
-        email: credentials.email,
-        role: credentials.role,
-        name: getMockUserName(credentials.email, credentials.role),
-        avatar: undefined,
-      };
+        const studentData = response.data;
+        
+        const authUser: AuthUser = {
+          id: studentData._id,
+          email: studentData.rollNum.toString(),
+          role: 'Student',
+          name: studentData.name,
+          avatar: undefined,
+        };
 
-      setUser(mockUser);
-      // Store in localStorage for persistence
-      localStorage.setItem('authUser', JSON.stringify(mockUser));
+        setUser(authUser);
+        localStorage.setItem('authUser', JSON.stringify(authUser));
+      } else {
+        // For other roles, keep mock logic for now
+        const mockUser: AuthUser = {
+          id: credentials.email,
+          email: credentials.email,
+          role: credentials.role,
+          name: getMockUserName(credentials.email, credentials.role),
+          avatar: undefined,
+        };
+
+        setUser(mockUser);
+        localStorage.setItem('authUser', JSON.stringify(mockUser));
+      }
     } catch (error) {
+      console.error('Login error:', error);
       throw new Error('Invalid credentials');
     } finally {
       setIsLoading(false);

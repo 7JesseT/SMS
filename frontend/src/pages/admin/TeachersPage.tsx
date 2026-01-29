@@ -111,12 +111,12 @@ const TeachersPage: React.FC = () => {
       <DataTable columns={columns} data={paginatedTeachers} actions={actions} sortColumn={sortColumn} sortDirection={sortDirection} onSort={handleSort} page={page} rowsPerPage={rowsPerPage} totalRows={filteredTeachers.length} onPageChange={setPage} onRowsPerPageChange={setRowsPerPage} />
       <FormDialog open={openForm} title={selectedTeacher ? 'Edit Teacher' : 'Add Teacher'} onClose={() => setOpenForm(false)} onSubmit={handleSubmit(handleSave)}>
         <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid item xs={12} sm={6}><FormField name="name" control={control} label="Name" /></Grid>
-          <Grid item xs={12} sm={6}><FormField name="email" control={control} label="Email" /></Grid>
-          <Grid item xs={12} sm={6}><SelectField name="gender" control={control} label="Gender" options={[{value:'Male',label:'Male'},{value:'Female',label:'Female'}]} /></Grid>
-          <Grid item xs={12} sm={6}><FormField name="contactNumber" control={control} label="Contact" /></Grid>
-          <Grid item xs={12} sm={6}><FormField name="qualification" control={control} label="Qualification" /></Grid>
-          <Grid item xs={12} sm={6}><FormField name="experience" control={control} label="Experience (years)" type="number" /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><FormField name="name" control={control} label="Name" /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><FormField name="email" control={control} label="Email" /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><SelectField name="gender" control={control} label="Gender" options={[{value:'Male',label:'Male'},{value:'Female',label:'Female'}]} /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><FormField name="contactNumber" control={control} label="Contact" /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><FormField name="qualification" control={control} label="Qualification" /></Grid>
+          <Grid size={{ xs: 12, sm: 6 }}><FormField name="experience" control={control} label="Experience (years)" type="number" /></Grid>
         </Grid>
       </FormDialog>
       <ConfirmDialog open={openDelete} title="Delete Teacher" message={`Delete ${selectedTeacher?.name}?`} onConfirm={() => { setTeachers(teachers.filter(t => t._id !== selectedTeacher?._id)); setOpenDelete(false); }} onCancel={() => setOpenDelete(false)} confirmColor="error" />
