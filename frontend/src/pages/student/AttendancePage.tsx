@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Grid,
   Card,
   CardContent,
   Typography,
@@ -20,6 +19,7 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import {
   CheckCircle as PresentIcon,
   Cancel as AbsentIcon,
@@ -79,7 +79,7 @@ const AttendancePage: React.FC = () => {
 
       {/* Overview Cards */}
       <Grid container spacing={3} mb={4}>
-        <Grid item xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -105,7 +105,7 @@ const AttendancePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -128,7 +128,7 @@ const AttendancePage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" justifyContent="space-between">

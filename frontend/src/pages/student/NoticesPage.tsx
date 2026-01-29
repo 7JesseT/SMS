@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Grid,
   Card,
   CardContent,
   Typography,
@@ -15,6 +14,7 @@ import {
   ListItem,
   Button,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import {
   Search as SearchIcon,
   Notifications as NotificationIcon,
@@ -55,7 +55,7 @@ const NoticesPage: React.FC = () => {
 
       {/* Header Stats */}
       <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2}>
@@ -75,7 +75,7 @@ const NoticesPage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2}>
@@ -100,7 +100,7 @@ const NoticesPage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2}>
@@ -140,7 +140,7 @@ const NoticesPage: React.FC = () => {
       {/* Notices Grid */}
       <Grid container spacing={3}>
         {/* Notices List */}
-        <Grid item xs={12} md={selectedNotice ? 6 : 12}>
+        <Grid size={{ xs: 12, md: selectedNotice ? 6 : 12 }}>
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" fontWeight="bold" mb={2}>
               All Notices ({sortedNotices.length})
@@ -209,7 +209,7 @@ const NoticesPage: React.FC = () => {
 
         {/* Notice Detail View */}
         {selectedNotice && selectedNoticeData && (
-          <Grid item xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Paper sx={{ p: 3, position: 'sticky', top: 20 }}>
               <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
                 <Typography variant="h5" fontWeight="bold">

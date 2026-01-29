@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Grid,
   Card,
   CardContent,
   Typography,
@@ -23,6 +22,7 @@ import {
   IconButton,
   InputAdornment,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import {
   Add as AddIcon,
   Search as SearchIcon,
@@ -88,7 +88,7 @@ const ComplaintsPage: React.FC = () => {
 
       {/* Overview Cards */}
       <Grid container spacing={3} mb={3}>
-        <Grid item xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2}>
@@ -108,7 +108,7 @@ const ComplaintsPage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2}>
@@ -128,7 +128,7 @@ const ComplaintsPage: React.FC = () => {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={4}>
+        <Grid size={{ xs: 12, sm: 4 }}>
           <Card>
             <CardContent>
               <Box display="flex" alignItems="center" gap={2}>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:10000';
+const API_BASE_URL = 'https://sms-15wv.onrender.com';
 
 export const api = axios.create({
   baseURL: API_BASE_URL,

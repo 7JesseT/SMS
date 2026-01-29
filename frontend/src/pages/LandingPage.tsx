@@ -56,9 +56,12 @@ const LandingPage: React.FC = () => {
       } else {
         navigate('/teacher/login');
       }
-    } else {
-      // For Admin, redirect to login for now
-      navigate('/login');
+    } else if (userType === 'Admin') {
+      if (actionType === 'register') {
+        navigate('/admin/register');
+      } else {
+        navigate('/admin/login');
+      }
     }
   };
 
@@ -369,11 +372,9 @@ const LandingPage: React.FC = () => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          <Typography variant="h5" fontWeight="bold" textAlign="center">
-            Select Your Role
-          </Typography>
-          <Typography variant="body2" color="text.secondary" textAlign="center" mt={1}>
+        <DialogTitle sx={{ textAlign: 'center' }}>
+          Select Your Role
+          <Typography variant="body2" color="text.secondary" mt={1}>
             Choose the account type that applies to you
           </Typography>
         </DialogTitle>

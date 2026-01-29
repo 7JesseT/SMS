@@ -22,8 +22,10 @@ if (!MONGO_URI) {
 
 app.use(express.json({ limit: '10mb' }))
 app.use(cors({
-    origin: '*',
-    credentials: true
+    origin: ['http://localhost:5173', 'http://localhost:3000', 'https://sms-15wv.onrender.com'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }))
 
 // Connect to MongoDB

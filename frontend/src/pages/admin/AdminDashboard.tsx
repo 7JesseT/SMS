@@ -1,156 +1,285 @@
 import React from 'react';
-import { Box, Paper, Typography } from '@mui/material';
+import {
+  Box,
+  Typography,
+  Card,
+  CardContent,
+  Button,
+  Avatar,
+  Container,
+} from '@mui/material';
 import Grid from "@mui/material/Grid";
 import {
-  People,
-  School,
-  Class,
-  MenuBook,
-  TrendingUp,
-  PersonAdd,
+  Class as ClassIcon,
+  Subject as SubjectIcon,
+  Campaign as NoticeIcon,
+  Report as ComplaintIcon,
+  ArrowForward as ArrowForwardIcon,
+  Logout as LogoutIcon,
 } from '@mui/icons-material';
-import { StatsCard } from '../../components/common';
-import { mockStudents } from '../../data/mockStudents';
-import { mockTeachers } from '../../data/mockTeachers';
-import { mockClasses } from '../../data/mockClasses';
-import { mockSubjects } from '../../data/mockSubjects';
-import { mockComplaints } from '../../data/mockComplaints';
-import { mockNotices } from '../../data/mockNotices';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard: React.FC = () => {
-  // Calculate statistics
-  const totalStudents = mockStudents.length;
-  const totalTeachers = mockTeachers.length;
-  const totalClasses = mockClasses.length;
-  const totalSubjects = mockSubjects.length;
-  const activeComplaints = mockComplaints.filter(c => c.status === 'Pending').length;
-  const recentNotices = mockNotices.filter(n => {
-    const noticeDate = new Date(n.date);
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    return noticeDate > weekAgo;
-  }).length;
+  const navigate = useNavigate();
+
+  // Get user from localStorage
+  const authUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+
+  const handleLogout = () => {
+    localStorage.removeItem('authUser');
+    navigate('/');
+  };
 
   return (
-    <Box>
-      <Typography variant="h4" fontWeight={700} gutterBottom>
-        Dashboard Overview
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
-        Welcome to your school management system
-      </Typography>
-
-      <Grid container spacing={3}>
-        {/* Statistics Cards */}
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <StatsCard
-            title="Total Students"
-            value={totalStudents}
-            icon={<People />}
-            color="primary"
-            trend={{ value: 12, isPositive: true }}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <StatsCard
-            title="Total Teachers"
-            value={totalTeachers}
-            icon={<School />}
-            color="success"
-            trend={{ value: 5, isPositive: true }}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <StatsCard
-            title="Total Classes"
-            value={totalClasses}
-            icon={<Class />}
-            color="info"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <StatsCard
-            title="Total Subjects"
-            value={totalSubjects}
-            icon={<MenuBook />}
-            color="warning"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <StatsCard
-            title="Active Complaints"
-            value={activeComplaints}
-            icon={<TrendingUp />}
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
+      <Container maxWidth="lg">
+        {/* Logout Button */}
+        <Box display="flex" justifyContent="flex-end" mb={2}>
+          <Button
+            variant="outlined"
             color="error"
-            subtitle="Pending resolution"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <StatsCard
-            title="Recent Notices"
-            value={recentNotices}
-            icon={<PersonAdd />}
-            color="secondary"
-            subtitle="Posted this week"
-          />
-        </Grid>
+            startIcon={<LogoutIcon />}
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </Box>
 
-        {/* Recent Activity Section */}
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
-              Recent Notices
-            </Typography>
-            {mockNotices.slice(0, 5).map((notice) => (
-              <Box
-                key={notice._id}
+        {/* Welcome Section */}
+        <Box mb={5}>
+          <Typography variant="h4" fontWeight="bold" gutterBottom>
+            Welcome back, {authUser?.name || 'Admin'}!
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Manage your school with ease
+          </Typography>
+        </Box>
+
+        {/* Management Grid - 2x2 Layout */}
+        <Box display="flex" justifyContent="center">
+          <Grid container spacing={3} maxWidth="1200px">
+            {/* Classes Management */}
+            <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card
+              elevation={3}
+              sx={{
+                height: '100%',
+                minHeight: 220,
+                transition: 'all 0.3s',
+                cursor: 'pointer',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 6,
+                },
+              }}
+              onClick={() => navigate('/admin/classes')}
+            >
+              <CardContent
                 sx={{
-                  py: 1.5,
-                  borderBottom: '1px solid',
-                  borderColor: 'divider',
-                  '&:last-child': { borderBottom: 'none' },
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  p: 3,
+                  textAlign: 'center',
                 }}
               >
-                <Typography variant="body2" fontWeight={500}>
-                  {notice.title}
-                </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {new Date(notice.date).toLocaleDateString()} • {notice.details.substring(0, 50)}...
-                </Typography>
-              </Box>
-            ))}
-          </Paper>
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
-              Pending Complaints
-            </Typography>
-            {mockComplaints
-              .filter(c => c.status === 'Pending')
-              .slice(0, 5)
-              .map((complaint) => (
-                <Box
-                  key={complaint._id}
+                <Avatar
                   sx={{
-                    py: 1.5,
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
-                    '&:last-child': { borderBottom: 'none' },
+                    width: 64,
+                    height: 64,
+                    bgcolor: 'primary.main',
+                    mb: 2,
                   }}
                 >
-                  <Typography variant="body2" fontWeight={500}>
-                    {complaint.complaint}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {new Date(complaint.date).toLocaleDateString()}
-                  </Typography>
-                </Box>
-              ))}
-          </Paper>
+                  <ClassIcon sx={{ fontSize: 32 }} />
+                </Avatar>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  Manage Classes
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mb={2}>
+                  Create, view, and delete classes
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  endIcon={<ArrowForwardIcon />}
+                  size="small"
+                >
+                  Manage
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Subjects Management */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card
+              elevation={3}
+              sx={{
+                height: '100%',
+                minHeight: 220,
+                transition: 'all 0.3s',
+                cursor: 'pointer',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 6,
+                },
+              }}
+              onClick={() => navigate('/admin/subjects')}
+            >
+              <CardContent
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  p: 3,
+                  textAlign: 'center',
+                }}
+              >
+                <Avatar
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    bgcolor: 'success.main',
+                    mb: 2,
+                  }}
+                >
+                  <SubjectIcon sx={{ fontSize: 32 }} />
+                </Avatar>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  Manage Subjects
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mb={2}>
+                  Create, view, and delete subjects
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="success"
+                  endIcon={<ArrowForwardIcon />}
+                  size="small"
+                >
+                  Manage
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Notices Management */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card
+              elevation={3}
+              sx={{
+                height: '100%',
+                minHeight: 220,
+                transition: 'all 0.3s',
+                cursor: 'pointer',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 6,
+                },
+              }}
+              onClick={() => navigate('/admin/notices')}
+            >
+              <CardContent
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  p: 3,
+                  textAlign: 'center',
+                }}
+              >
+                <Avatar
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    bgcolor: 'warning.main',
+                    mb: 2,
+                  }}
+                >
+                  <NoticeIcon sx={{ fontSize: 32 }} />
+                </Avatar>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  Manage Notices
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mb={2}>
+                  Create, update, and delete notices
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="warning"
+                  endIcon={<ArrowForwardIcon />}
+                  size="small"
+                >
+                  Manage
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Complaints */}
+          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+            <Card
+              elevation={3}
+              sx={{
+                height: '100%',
+                minHeight: 220,
+                transition: 'all 0.3s',
+                cursor: 'pointer',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: 6,
+                },
+              }}
+              onClick={() => navigate('/admin/complaints')}
+            >
+              <CardContent
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  p: 3,
+                  textAlign: 'center',
+                }}
+              >
+                <Avatar
+                  sx={{
+                    width: 64,
+                    height: 64,
+                    bgcolor: 'error.main',
+                    mb: 2,
+                  }}
+                >
+                  <ComplaintIcon sx={{ fontSize: 32 }} />
+                </Avatar>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  View Complaints
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mb={2}>
+                  Review all student complaints
+                </Typography>
+                <Button
+                  variant="contained"
+                  color="error"
+                  endIcon={<ArrowForwardIcon />}
+                  size="small"
+                >
+                  View
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
+        </Box>
+      </Container>
     </Box>
   );
 };

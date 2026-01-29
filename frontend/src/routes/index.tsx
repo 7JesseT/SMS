@@ -1,11 +1,9 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { AppLayout } from '../components/common/Layout';
 
 // Pages
 import LandingPage from '../pages/LandingPage';
-import LoginPage from '../pages/LoginPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import StudentLoginPage from '../pages/student/StudentLoginPage';
 import StudentRegisterPage from '../pages/student/StudentRegisterPage';
@@ -13,12 +11,13 @@ import TeacherLoginPage from '../pages/teacher/TeacherLoginPage';
 import TeacherRegisterPage from '../pages/teacher/TeacherRegisterPage';
 
 // Admin Pages
+import AdminLoginPage from '../pages/admin/AdminLoginPage';
+import AdminRegisterPage from '../pages/admin/AdminRegisterPage';
 import AdminDashboard from '../pages/admin/AdminDashboard';
-import StudentsPage from '../pages/admin/StudentsPage';
-import TeachersPage from '../pages/admin/TeachersPage';
-import ClassesPage from '../pages/admin/ClassesPage';
-import SubjectsPage from '../pages/admin/SubjectsPage';
-import NoticesPage from '../pages/admin/NoticesPage';
+import AdminProfilePage from '../pages/admin/AdminProfilePage';
+import ClassesManagementPage from '../pages/admin/ClassesManagementPage';
+import SubjectsManagementPage from '../pages/admin/SubjectsManagementPage';
+import NoticesManagementPage from '../pages/admin/NoticesManagementPage';
 import ComplaintsPage from '../pages/admin/ComplaintsPage';
 
 // Teacher Pages
@@ -85,22 +84,41 @@ const AppRouter: React.FC = () => {
             )
           } 
         />
+        <Route 
+          path="/admin/login" 
+          element={
+            isAuthenticated ? (
+              <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
+            ) : (
+              <AdminLoginPage />
+            )
+          } 
+        />
+        <Route 
+          path="/admin/register" 
+          element={
+            isAuthenticated ? (
+              <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
+            ) : (
+              <AdminRegisterPage />
+            )
+          } 
+        />
 
         {/* Admin Routes */}
         <Route
           path="/admin"
           element={
             <ProtectedRoute allowedRoles={['Admin']}>
-              <AppLayout />
+              <Outlet />
             </ProtectedRoute>
           }
         >
           <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="students" element={<StudentsPage />} />
-          <Route path="teachers" element={<TeachersPage />} />
-          <Route path="classes" element={<ClassesPage />} />
-          <Route path="subjects" element={<SubjectsPage />} />
-          <Route path="notices" element={<NoticesPage />} />
+          <Route path="profile" element={<AdminProfilePage />} />
+          <Route path="classes" element={<ClassesManagementPage />} />
+          <Route path="subjects" element={<SubjectsManagementPage />} />
+          <Route path="notices" element={<NoticesManagementPage />} />
           <Route path="complaints" element={<ComplaintsPage />} />
         </Route>
 
