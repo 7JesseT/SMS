@@ -225,21 +225,6 @@ npm run lint
 npm run build
 ```
 
-## 📝 Environment Variables
-
-### Backend `.env`
-```env
-PORT=10000
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/database
-NODE_ENV=development
-```
-
-### Frontend (Optional)
-Create `.env` in frontend directory if you need environment-specific configurations:
-```env
-VITE_API_URL=http://localhost:10000
-```
-
 ## 🐛 Troubleshooting
 
 ### Common Issues
