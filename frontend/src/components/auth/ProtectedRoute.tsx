@@ -13,7 +13,20 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children, 
   allowedRoles 
 }) => {
-  const { user, isAuthenticated, isLoading } = useAuth();
+  const { user: authUser, isAuthenticated, isLoading } = useAuth();
+
+  // Check localStorage for direct teacher/admin logins
+  const storedUser = React.useMemo(() => {
+    try {
+      const stored = localStorage.getItem('authUser');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const user = authUser || storedUser;
+  const isAuth = isAuthenticated || !!storedUser;
 
   if (isLoading) {
     return (
@@ -28,7 +41,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  if (!isAuthenticated || !user) {
+  if (!isAuth || !user) {
     return <Navigate to="/login" replace />;
   }
 

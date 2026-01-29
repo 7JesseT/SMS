@@ -50,8 +50,14 @@ const LandingPage: React.FC = () => {
       } else {
         navigate('/login');
       }
+    } else if (userType === 'Teacher') {
+      if (actionType === 'register') {
+        navigate('/teacher/register');
+      } else {
+        navigate('/teacher/login');
+      }
     } else {
-      // For Teacher and Admin, redirect to login for now
+      // For Admin, redirect to login for now
       navigate('/login');
     }
   };

@@ -9,6 +9,8 @@ import LoginPage from '../pages/LoginPage';
 import NotFoundPage from '../pages/NotFoundPage';
 import StudentLoginPage from '../pages/student/StudentLoginPage';
 import StudentRegisterPage from '../pages/student/StudentRegisterPage';
+import TeacherLoginPage from '../pages/teacher/TeacherLoginPage';
+import TeacherRegisterPage from '../pages/teacher/TeacherRegisterPage';
 
 // Admin Pages
 import AdminDashboard from '../pages/admin/AdminDashboard';
@@ -21,10 +23,8 @@ import ComplaintsPage from '../pages/admin/ComplaintsPage';
 
 // Teacher Pages
 import TeacherDashboard from '../pages/teacher/TeacherDashboard';
-import TeacherClassesPage from '../pages/teacher/ClassesPage';
-import AttendancePage from '../pages/teacher/AttendancePage';
-import GradesPage from '../pages/teacher/GradesPage';
-import TeacherProfilePage from '../pages/teacher/ProfilePage';
+import TeacherProfilePage from '../pages/teacher/TeacherProfilePage';
+import ReportAttendancePage from '../pages/teacher/ReportAttendancePage';
 
 // Student Pages
 import StudentDashboard from '../pages/student/StudentDashboard';
@@ -65,6 +65,26 @@ const AppRouter: React.FC = () => {
             )
           } 
         />
+        <Route 
+          path="/teacher/login" 
+          element={
+            isAuthenticated ? (
+              <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
+            ) : (
+              <TeacherLoginPage />
+            )
+          } 
+        />
+        <Route 
+          path="/teacher/register" 
+          element={
+            isAuthenticated ? (
+              <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
+            ) : (
+              <TeacherRegisterPage />
+            )
+          } 
+        />
 
         {/* Admin Routes */}
         <Route
@@ -89,15 +109,13 @@ const AppRouter: React.FC = () => {
           path="/teacher"
           element={
             <ProtectedRoute allowedRoles={['Teacher']}>
-              <AppLayout />
+              <Outlet />
             </ProtectedRoute>
           }
         >
           <Route path="dashboard" element={<TeacherDashboard />} />
-          <Route path="classes" element={<TeacherClassesPage />} />
-          <Route path="attendance" element={<AttendancePage />} />
-          <Route path="grades" element={<GradesPage />} />
           <Route path="profile" element={<TeacherProfilePage />} />
+          <Route path="attendance" element={<ReportAttendancePage />} />
         </Route>
 
         {/* Student Routes */}
