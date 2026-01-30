@@ -50,11 +50,14 @@ const studentLogIn = async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
+        // Store school ID before populating (since populate changes the structure)
+        const schoolId = student.school;
+
         student = await student.populate("school", "schoolName");
         student = await student.populate("sclassName", "sclassName");
 
-        // Generate JWT token
-        const token = generateToken({ _id: student._id, role: 'Student', school: student.school._id || student.school });
+        // Generate JWT token using the original school ID
+        const token = generateToken({ _id: student._id, role: 'Student', school: schoolId });
 
         // Set httpOnly cookie
         res.cookie('token', token, getCookieOptions());

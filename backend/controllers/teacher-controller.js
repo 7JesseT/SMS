@@ -44,12 +44,15 @@ const teacherLogIn = async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
+        // Store school ID before populating
+        const schoolId = teacher.school;
+
         teacher = await teacher.populate("teachSubject", "subName sessions");
         teacher = await teacher.populate("school", "schoolName");
         teacher = await teacher.populate("teachSclass", "sclassName");
 
-        // Generate JWT token
-        const token = generateToken({ _id: teacher._id, role: 'Teacher', school: teacher.school._id || teacher.school });
+        // Generate JWT token using the original school ID
+        const token = generateToken({ _id: teacher._id, role: 'Teacher', school: schoolId });
 
         // Set httpOnly cookie
         res.cookie('token', token, getCookieOptions());
