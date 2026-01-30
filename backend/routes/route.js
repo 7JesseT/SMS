@@ -62,7 +62,7 @@ router.put('/RemoveStudentAtten/:id', authenticate, authorize('Admin'), removeSt
 router.get("/Teachers/:id", authenticate, getTeachers);
 router.get("/Teacher/:id", authenticate, getTeacherDetail);
 router.delete("/Teacher/:id", authenticate, authorize('Admin'), deleteTeacher);
-router.put("/TeacherSubject", authenticate, authorize('Admin'), updateTeacherSubject);
+router.put("/TeacherSubject", authenticate, authorize('Admin', 'Teacher'), updateTeacherSubject);
 router.post('/TeacherAttendance/:id', authenticate, authorize('Admin'), teacherAttendance);
 
 // Notice
