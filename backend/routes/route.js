@@ -63,7 +63,7 @@ router.get("/Teachers/:id", authenticate, getTeachers);
 router.get("/Teacher/:id", authenticate, getTeacherDetail);
 router.delete("/Teacher/:id", authenticate, authorize('Admin'), deleteTeacher);
 router.put("/TeacherSubject", authenticate, authorize('Admin', 'Teacher'), updateTeacherSubject);
-router.post('/TeacherAttendance/:id', authenticate, authorize('Admin'), teacherAttendance);
+router.post('/TeacherAttendance/:id', authenticate, authorize('Admin', 'Teacher'), teacherAttendance);
 
 // Notice
 router.post('/NoticeCreate', authenticate, authorize('Admin'), noticeCreate);
