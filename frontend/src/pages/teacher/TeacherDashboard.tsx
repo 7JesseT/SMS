@@ -17,16 +17,18 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import ChangeSubjectModal from '../../components/teacher/ChangeSubjectModal';
+import { useAuth } from '../../context/AuthContext';
 
 const TeacherDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [openSubjectModal, setOpenSubjectModal] = useState(false);
 
   // Get user from localStorage
-  const authUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const authUser = user || JSON.parse(localStorage.getItem('authUser') || '{}');
 
-  const handleLogout = () => {
-    localStorage.removeItem('authUser');
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 

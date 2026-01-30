@@ -8,8 +8,34 @@ export const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: false,
+  withCredentials: true, // Required for httpOnly cookies
 });
+
+// Auth API
+export const authApi = {
+  getCurrentUser: () => api.get('/auth/me'),
+  logout: () => api.post('/auth/logout'),
+};
+
+// Response interceptor for handling auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Clear any stale auth data and redirect to landing
+      localStorage.removeItem('authUser');
+      localStorage.removeItem('userRole');
+      
+      // Only redirect if not already on a login/landing page
+      const currentPath = window.location.pathname;
+      const publicPaths = ['/', '/login', '/admin-login', '/student-login', '/teacher-login'];
+      if (!publicPaths.some(path => currentPath === path || currentPath.startsWith(path))) {
+        window.location.href = '/';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Student Authentication
 export const studentApi = {

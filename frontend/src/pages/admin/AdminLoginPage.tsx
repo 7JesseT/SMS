@@ -21,10 +21,13 @@ import {
   School as SchoolIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { adminApi } from '../../services/adminApi';
+import { useAuth } from '../../context/AuthContext';
 
 const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const { loginAdmin } = useAuth() as ReturnType<typeof useAuth> & {
+    loginAdmin: (email: string, password: string) => Promise<void>;
+  };
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -61,26 +64,11 @@ const AdminLoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await adminApi.login({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      const adminData = response.data;
-
-      // Store auth data in localStorage
-      localStorage.setItem('authUser', JSON.stringify({
-        id: adminData._id,
-        name: adminData.name,
-        email: adminData.email,
-        role: adminData.role,
-        schoolName: adminData.schoolName,
-      }));
-
-      // Redirect to admin dashboard
+      await loginAdmin(formData.email, formData.password);
       navigate('/admin/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Invalid credentials. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

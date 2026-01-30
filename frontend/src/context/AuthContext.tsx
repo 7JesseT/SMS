@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
-import type { AuthContextType, AuthUser, LoginCredentials, UserRole } from '../types';
-import { studentApi } from '../services/api';
+import type { AuthContextType, AuthUser, UserRole } from '../types';
+import { authApi, api } from '../services/api';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -17,88 +17,161 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+// API response types
+interface AuthResponse {
+  user: {
+    _id: string;
+    name?: string;
+    email?: string;
+    rollNum?: number;
+    schoolName?: string;
+    school?: { _id: string; schoolName: string } | string;
+    sclassName?: { _id: string; sclassName: string } | string;
+    teachSubject?: { _id: string; subName: string };
+    teachSclass?: { _id: string; sclassName: string };
+  };
+  role: UserRole;
+}
+
+// Transform API response to AuthUser
+const transformUserResponse = (data: AuthResponse): AuthUser => {
+  const { user, role } = data;
+  
+  // Store full user data for components that need it
+  localStorage.setItem('currentUser', JSON.stringify(user));
+  localStorage.setItem('userRole', role);
+  
+  return {
+    id: user._id,
+    email: user.email || user.rollNum?.toString() || '',
+    role: role,
+    name: user.name || user.schoolName || 'User',
+    avatar: undefined,
+  };
+};
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const login = async (credentials: LoginCredentials): Promise<void> => {
-    setIsLoading(true);
+  // Verify session with backend
+  const verifySession = useCallback(async (): Promise<boolean> => {
     try {
-      if (credentials.role === 'Student') {
-        // Call real student login API
-        const response = await studentApi.login({
-          rollNum: parseInt(credentials.email), // Using email field for rollNum
-          studentName: credentials.password.split(':')[0] || '', // Extract name from password field
-          password: credentials.password.split(':')[1] || credentials.password,
-        });
-
-        const studentData = response.data;
-        
-        const authUser: AuthUser = {
-          id: studentData._id,
-          email: studentData.rollNum.toString(),
-          role: 'Student',
-          name: studentData.name,
-          avatar: undefined,
-        };
-
-        setUser(authUser);
-        localStorage.setItem('authUser', JSON.stringify(authUser));
-      } else {
-        // For other roles, keep mock logic for now
-        const mockUser: AuthUser = {
-          id: credentials.email,
-          email: credentials.email,
-          role: credentials.role,
-          name: getMockUserName(credentials.email, credentials.role),
-          avatar: undefined,
-        };
-
-        setUser(mockUser);
-        localStorage.setItem('authUser', JSON.stringify(mockUser));
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      throw new Error('Invalid credentials');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('authUser');
-  };
-
-  // Helper function to generate mock user names
-  const getMockUserName = (email: string, role: UserRole): string => {
-    const emailPrefix = email.split('@')[0];
-    const formatted = emailPrefix
-      .split('.')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-    
-    return formatted || `${role} User`;
-  };
-
-  // Check for existing session on mount
-  React.useEffect(() => {
-    const storedUser = localStorage.getItem('authUser');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        localStorage.removeItem('authUser');
-      }
+      const response = await authApi.getCurrentUser();
+      const authUser = transformUserResponse(response.data);
+      setUser(authUser);
+      localStorage.setItem('authUser', JSON.stringify(authUser));
+      return true;
+    } catch {
+      // Session invalid or expired
+      setUser(null);
+      localStorage.removeItem('authUser');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('userRole');
+      return false;
     }
   }, []);
 
-  const value: AuthContextType = {
+  // Initialize auth state on mount
+  useEffect(() => {
+    const initAuth = async () => {
+      setIsLoading(true);
+      try {
+        // Try to verify existing session with backend
+        await verifySession();
+      } catch {
+        // No valid session
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+        setIsInitialized(true);
+      }
+    };
+
+    initAuth();
+  }, [verifySession]);
+
+  // Login handlers for each user type
+  const loginAdmin = async (email: string, password: string): Promise<void> => {
+    const response = await api.post('/AdminLogin', { email, password });
+    
+    if (response.data.message) {
+      throw new Error(response.data.message);
+    }
+    
+    const authUser = transformUserResponse(response.data);
+    setUser(authUser);
+    localStorage.setItem('authUser', JSON.stringify(authUser));
+  };
+
+  const loginStudent = async (rollNum: number, studentName: string, password: string): Promise<void> => {
+    const response = await api.post('/StudentLogin', { rollNum, studentName, password });
+    
+    if (response.data.message) {
+      throw new Error(response.data.message);
+    }
+    
+    const authUser = transformUserResponse(response.data);
+    setUser(authUser);
+    localStorage.setItem('authUser', JSON.stringify(authUser));
+  };
+
+  const loginTeacher = async (email: string, password: string): Promise<void> => {
+    const response = await api.post('/TeacherLogin', { email, password });
+    
+    if (response.data.message) {
+      throw new Error(response.data.message);
+    }
+    
+    const authUser = transformUserResponse(response.data);
+    setUser(authUser);
+    localStorage.setItem('authUser', JSON.stringify(authUser));
+  };
+
+  // Generic login (for backward compatibility if needed)
+  const login = async (): Promise<void> => {
+    throw new Error('Use specific login methods: loginAdmin, loginStudent, loginTeacher');
+  };
+
+  const logout = useCallback(async () => {
+    try {
+      await authApi.logout();
+    } catch {
+      // Continue with logout even if API call fails
+    } finally {
+      setUser(null);
+      localStorage.removeItem('authUser');
+      localStorage.removeItem('currentUser');
+      localStorage.removeItem('userRole');
+    }
+  }, []);
+
+  // Get full user data (for components that need more than AuthUser)
+  const getCurrentUserData = () => {
+    const stored = localStorage.getItem('currentUser');
+    return stored ? JSON.parse(stored) : null;
+  };
+
+  const value: AuthContextType & {
+    loginAdmin: (email: string, password: string) => Promise<void>;
+    loginStudent: (rollNum: number, studentName: string, password: string) => Promise<void>;
+    loginTeacher: (email: string, password: string) => Promise<void>;
+    getCurrentUserData: () => unknown;
+    isInitialized: boolean;
+    verifySession: () => Promise<boolean>;
+  } = {
     user,
     isAuthenticated: !!user,
     isLoading,
+    isInitialized,
     login,
     logout,
+    loginAdmin,
+    loginStudent,
+    loginTeacher,
+    getCurrentUserData,
+    verifySession,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -12,10 +12,13 @@ import {
   Link as MuiLink,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { studentApi } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 const StudentLoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const { loginStudent } = useAuth() as ReturnType<typeof useAuth> & {
+    loginStudent: (rollNum: number, studentName: string, password: string) => Promise<void>;
+  };
   const [formData, setFormData] = useState({
     name: '',
     rollNum: '',
@@ -51,30 +54,12 @@ const StudentLoginPage: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await studentApi.login({
-        rollNum: rollNumValue,
-        studentName: formData.name,
-        password: formData.password,
-      });
-
-      const studentData = response.data;
-
-      // Store user data in localStorage and context
-      const authUser = {
-        id: studentData._id,
-        email: studentData.rollNum.toString(),
-        role: 'Student',
-        name: studentData.name,
-        avatar: undefined,
-      };
-
-      localStorage.setItem('authUser', JSON.stringify(authUser));
-      
-      // Reload the page to trigger AuthContext to pick up the localStorage data
-      window.location.href = '/student/dashboard';
-    } catch (err: any) {
+      await loginStudent(rollNumValue, formData.name, formData.password);
+      navigate('/student/dashboard');
+    } catch (err: unknown) {
       console.error('Login error:', err);
-      setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
+      const errorMessage = err instanceof Error ? err.message : 'Invalid credentials. Please try again.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

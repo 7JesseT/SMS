@@ -32,9 +32,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../services/adminApi';
 import type { ClassData } from '../../services/adminApi';
+import { useAuth } from '../../context/AuthContext';
 
 const ClassesPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -48,7 +50,7 @@ const ClassesPage: React.FC = () => {
   const [deleting, setDeleting] = useState(false);
 
   // Get user from localStorage
-  const authUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const authUser = user || JSON.parse(localStorage.getItem('authUser') || '{}');
 
   useEffect(() => {
     fetchClasses();
@@ -143,8 +145,8 @@ const ClassesPage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('authUser');
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 

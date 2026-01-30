@@ -52,7 +52,7 @@ const LoginPage: React.FC = () => {
     setError('');
     try {
       await login(data);
-      navigate(`/${data.role.toLowerCase()}/dashboard`);
+      navigate(`/${data.role?.toLowerCase() || 'student'}/dashboard`);
     } catch (err) {
       setError('Invalid credentials. Please try again.');
     }

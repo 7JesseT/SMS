@@ -11,14 +11,16 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../services/adminApi';
 import type { ComplaintData } from '../../services/adminApi';
+import { useAuth } from '../../context/AuthContext';
 
 const ComplaintsPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [complaints, setComplaints] = useState<ComplaintData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const authUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const authUser = user || JSON.parse(localStorage.getItem('authUser') || '{}');
 
   useEffect(() => {
     fetchComplaints();
@@ -45,8 +47,8 @@ const ComplaintsPage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('authUser');
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 

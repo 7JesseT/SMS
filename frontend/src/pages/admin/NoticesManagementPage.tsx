@@ -11,9 +11,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../services/adminApi';
 import type { NoticeData } from '../../services/adminApi';
+import { useAuth } from '../../context/AuthContext';
 
 const NoticesManagementPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [notices, setNotices] = useState<NoticeData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -27,7 +29,7 @@ const NoticesManagementPage: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  const authUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const authUser = user || JSON.parse(localStorage.getItem('authUser') || '{}');
 
   useEffect(() => {
     fetchNotices();
@@ -136,8 +138,8 @@ const NoticesManagementPage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('authUser');
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 

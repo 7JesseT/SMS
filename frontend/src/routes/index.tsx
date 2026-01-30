@@ -38,6 +38,8 @@ import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
+  const roleSlug = user?.role?.toLowerCase();
+  const dashboardPath = roleSlug ? `/${roleSlug}/dashboard` : '/';
 
   return (
     <BrowserRouter>
@@ -48,7 +50,7 @@ const AppRouter: React.FC = () => {
           path="/login" 
           element={
             isAuthenticated ? (
-              <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
+              <Navigate to={dashboardPath} replace />
             ) : (
               <StudentLoginPage />
             )
@@ -58,7 +60,7 @@ const AppRouter: React.FC = () => {
           path="/register" 
           element={
             isAuthenticated ? (
-              <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
+              <Navigate to={dashboardPath} replace />
             ) : (
               <StudentRegisterPage />
             )
@@ -68,7 +70,7 @@ const AppRouter: React.FC = () => {
           path="/teacher/login" 
           element={
             isAuthenticated ? (
-              <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
+              <Navigate to={dashboardPath} replace />
             ) : (
               <TeacherLoginPage />
             )
@@ -78,7 +80,7 @@ const AppRouter: React.FC = () => {
           path="/teacher/register" 
           element={
             isAuthenticated ? (
-              <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
+              <Navigate to={dashboardPath} replace />
             ) : (
               <TeacherRegisterPage />
             )
@@ -88,7 +90,7 @@ const AppRouter: React.FC = () => {
           path="/admin/login" 
           element={
             isAuthenticated ? (
-              <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
+              <Navigate to={dashboardPath} replace />
             ) : (
               <AdminLoginPage />
             )
@@ -98,7 +100,7 @@ const AppRouter: React.FC = () => {
           path="/admin/register" 
           element={
             isAuthenticated ? (
-              <Navigate to={`/${user?.role.toLowerCase()}/dashboard`} replace />
+              <Navigate to={dashboardPath} replace />
             ) : (
               <AdminRegisterPage />
             )

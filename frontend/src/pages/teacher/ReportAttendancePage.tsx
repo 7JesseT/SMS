@@ -17,9 +17,11 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { teacherApi } from '../../services/teacherApi';
+import { useAuth } from '../../context/AuthContext';
 
 const ReportAttendancePage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [formData, setFormData] = useState({
     date: '',
     presentCount: '',
@@ -30,7 +32,7 @@ const ReportAttendancePage: React.FC = () => {
   const [success, setSuccess] = useState(false);
 
   // Get user from localStorage
-  const authUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const authUser = user || JSON.parse(localStorage.getItem('authUser') || '{}');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -112,8 +114,8 @@ const ReportAttendancePage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('authUser');
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 

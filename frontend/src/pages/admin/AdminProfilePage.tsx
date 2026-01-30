@@ -20,6 +20,7 @@ import {
 } from '@mui/icons-material';
 import { adminApi } from '../../services/adminApi';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 interface AdminDetails {
   _id: string;
@@ -32,12 +33,13 @@ interface AdminDetails {
 
 const AdminProfilePage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [admin, setAdmin] = useState<AdminDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   // Get user from localStorage
-  const authUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const authUser = user || JSON.parse(localStorage.getItem('authUser') || '{}');
 
   useEffect(() => {
     fetchAdminDetails();
@@ -64,8 +66,8 @@ const AdminProfilePage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('authUser');
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 

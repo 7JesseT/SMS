@@ -18,15 +18,17 @@ import {
   Logout as LogoutIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  // Get user from localStorage
-  const authUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  // Get full user data for display
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
 
-  const handleLogout = () => {
-    localStorage.removeItem('authUser');
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 
@@ -48,7 +50,7 @@ const AdminDashboard: React.FC = () => {
         {/* Welcome Section */}
         <Box mb={5}>
           <Typography variant="h4" fontWeight="bold" gutterBottom>
-            Welcome back, {authUser?.name || 'Admin'}!
+            Welcome back, {user?.name || currentUser?.name || currentUser?.schoolName || 'Admin'}!
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Manage your school with ease

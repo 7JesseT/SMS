@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const Student = require('../models/studentSchema.js');
 const Subject = require('../models/subjectSchema.js');
+const { generateToken, getCookieOptions } = require('../middleware/auth.js');
 
 const studentRegister = async (req, res) => {
     try {
@@ -14,7 +15,7 @@ const studentRegister = async (req, res) => {
         });
 
         if (existingStudent) {
-            res.send({ message: 'Roll Number already exists' });
+            return res.status(400).json({ message: 'Roll Number already exists' });
         }
         else {
             const student = new Student({
@@ -26,33 +27,44 @@ const studentRegister = async (req, res) => {
             let result = await student.save();
 
             result.password = undefined;
-            res.send(result);
+            res.status(201).json(result);
         }
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
 
 const studentLogIn = async (req, res) => {
     try {
-        let student = await Student.findOne({ rollNum: req.body.rollNum, name: req.body.studentName });
-        if (student) {
-            const validated = await bcrypt.compare(req.body.password, student.password);
-            if (validated) {
-                student = await student.populate("school", "schoolName")
-                student = await student.populate("sclassName", "sclassName")
-                student.password = undefined;
-                student.examResult = undefined;
-                student.attendance = undefined;
-                res.send(student);
-            } else {
-                res.send({ message: "Invalid password" });
-            }
-        } else {
-            res.send({ message: "Student not found" });
+        if (!req.body.rollNum || !req.body.studentName || !req.body.password) {
+            return res.status(400).json({ message: 'Roll number, name, and password are required' });
         }
+
+        let student = await Student.findOne({ rollNum: req.body.rollNum, name: req.body.studentName });
+        if (!student) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        const validated = await bcrypt.compare(req.body.password, student.password);
+        if (!validated) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        student = await student.populate("school", "schoolName");
+        student = await student.populate("sclassName", "sclassName");
+
+        // Generate JWT token
+        const token = generateToken({ _id: student._id, role: 'Student', school: student.school._id || student.school });
+
+        // Set httpOnly cookie
+        res.cookie('token', token, getCookieOptions());
+
+        student.password = undefined;
+        student.examResult = undefined;
+        student.attendance = undefined;
+        res.json({ user: student, role: 'Student' });
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
 

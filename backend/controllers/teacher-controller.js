@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const Teacher = require('../models/teacherSchema.js');
 const Subject = require('../models/subjectSchema.js');
+const { generateToken, getCookieOptions } = require('../middleware/auth.js');
 
 const teacherRegister = async (req, res) => {
     const { name, email, password, role, school, teachSubject, teachSclass } = req.body;
@@ -14,38 +15,49 @@ const teacherRegister = async (req, res) => {
         const existingTeacherByEmail = await Teacher.findOne({ email });
 
         if (existingTeacherByEmail) {
-            res.send({ message: 'Email already exists' });
+            return res.status(400).json({ message: 'Email already exists' });
         }
         else {
             let result = await teacher.save();
             await Subject.findByIdAndUpdate(teachSubject, { teacher: teacher._id });
             result.password = undefined;
-            res.send(result);
+            res.status(201).json(result);
         }
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
 
 const teacherLogIn = async (req, res) => {
     try {
-        let teacher = await Teacher.findOne({ email: req.body.email });
-        if (teacher) {
-            const validated = await bcrypt.compare(req.body.password, teacher.password);
-            if (validated) {
-                teacher = await teacher.populate("teachSubject", "subName sessions")
-                teacher = await teacher.populate("school", "schoolName")
-                teacher = await teacher.populate("teachSclass", "sclassName")
-                teacher.password = undefined;
-                res.send(teacher);
-            } else {
-                res.send({ message: "Invalid password" });
-            }
-        } else {
-            res.send({ message: "Teacher not found" });
+        if (!req.body.email || !req.body.password) {
+            return res.status(400).json({ message: 'Email and password are required' });
         }
+
+        let teacher = await Teacher.findOne({ email: req.body.email });
+        if (!teacher) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        const validated = await bcrypt.compare(req.body.password, teacher.password);
+        if (!validated) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+
+        teacher = await teacher.populate("teachSubject", "subName sessions");
+        teacher = await teacher.populate("school", "schoolName");
+        teacher = await teacher.populate("teachSclass", "sclassName");
+
+        // Generate JWT token
+        const token = generateToken({ _id: teacher._id, role: 'Teacher', school: teacher.school._id || teacher.school });
+
+        // Set httpOnly cookie
+        res.cookie('token', token, getCookieOptions());
+
+        teacher.password = undefined;
+        res.json({ user: teacher, role: 'Teacher' });
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
 

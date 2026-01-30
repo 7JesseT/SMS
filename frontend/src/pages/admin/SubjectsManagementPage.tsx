@@ -32,9 +32,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../services/adminApi';
 import type { SubjectData, ClassData } from '../../services/adminApi';
+import { useAuth } from '../../context/AuthContext';
 
 const SubjectsManagementPage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [subjects, setSubjects] = useState<SubjectData[]>([]);
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +53,7 @@ const SubjectsManagementPage: React.FC = () => {
   });
   const [creating, setCreating] = useState(false);
 
-  const authUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const authUser = user || JSON.parse(localStorage.getItem('authUser') || '{}');
 
   useEffect(() => {
     fetchSubjects();
@@ -142,8 +144,8 @@ const SubjectsManagementPage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('authUser');
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 

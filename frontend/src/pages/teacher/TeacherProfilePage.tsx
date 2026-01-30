@@ -19,6 +19,7 @@ import {
 } from '@mui/icons-material';
 import { teacherApi } from '../../services/teacherApi';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 interface TeacherDetails {
   _id: string;
@@ -35,12 +36,13 @@ interface TeacherDetails {
 
 const TeacherProfilePage: React.FC = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [teacher, setTeacher] = useState<TeacherDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   // Get user from localStorage
-  const authUser = JSON.parse(localStorage.getItem('authUser') || '{}');
+  const authUser = user || JSON.parse(localStorage.getItem('authUser') || '{}');
 
   useEffect(() => {
     fetchTeacherDetails();
@@ -67,8 +69,8 @@ const TeacherProfilePage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('authUser');
+  const handleLogout = async () => {
+    await logout();
     navigate('/');
   };
 

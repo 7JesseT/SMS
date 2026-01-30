@@ -1,9 +1,9 @@
 const router = require('express').Router();
+const { authenticate, authorize } = require('../middleware/auth.js');
 
-// const { adminRegister, adminLogIn, deleteAdmin, getAdminDetail, updateAdmin } = require('../controllers/admin-controller.js');
-
-const { adminRegister, adminLogIn, getAdminDetail} = require('../controllers/admin-controller.js');
-
+// Controllers
+const { adminRegister, adminLogIn, getAdminDetail } = require('../controllers/admin-controller.js');
+const { getCurrentUser, logout } = require('../controllers/auth-controller.js');
 const { sclassCreate, sclassList, deleteSclass, deleteSclasses, getSclassDetail, getSclassStudents } = require('../controllers/class-controller.js');
 const { complainCreate, complainList } = require('../controllers/complain-controller.js');
 const { noticeCreate, noticeList, deleteNotices, deleteNotice, updateNotice } = require('../controllers/notice-controller.js');
@@ -23,88 +23,72 @@ const {
 const { subjectCreate, classSubjects, getSubjectDetail, deleteSubject, allSubjects } = require('../controllers/subject-controller.js');
 const { teacherRegister, teacherLogIn, getTeachers, getTeacherDetail, deleteTeacher, updateTeacherSubject, teacherAttendance } = require('../controllers/teacher-controller.js');
 
-// Admin
+// =====================
+// PUBLIC ROUTES (No auth required)
+// =====================
+
+// Auth - Registration & Login
 router.post('/AdminReg', adminRegister);
 router.post('/AdminLogin', adminLogIn);
+router.post('/StudentReg', studentRegister);
+router.post('/StudentLogin', studentLogIn);
+router.post('/TeacherReg', teacherRegister);
+router.post('/TeacherLogin', teacherLogIn);
 
-router.get("/Admin/:id", getAdminDetail)
-// router.delete("/Admin/:id", deleteAdmin)
+// Session Management
+router.get('/auth/me', authenticate, getCurrentUser);
+router.post('/auth/logout', logout);
 
-// router.put("/Admin/:id", updateAdmin)
+// =====================
+// PROTECTED ROUTES (Auth required)
+// =====================
+
+// Admin
+router.get("/Admin/:id", authenticate, authorize('Admin'), getAdminDetail);
 
 // Student
-
-router.post('/StudentReg', studentRegister);
-router.post('/StudentLogin', studentLogIn)
-
-router.get("/Students/:id", getStudents)
-router.get("/Student/:id", getStudentDetail)
-
-router.delete("/Student/:id", deleteStudent)
-
-router.put("/Student/:id", updateStudent)
-
-router.put('/UpdateExamResult/:id', updateExamResult)
-
-router.put('/StudentAttendance/:id', studentAttendance)
-
-router.put('/RemoveAllStudentsSubAtten/:id', clearAllStudentsAttendanceBySubject);
-router.put('/RemoveAllStudentsAtten/:id', clearAllStudentsAttendance);
-
-router.put('/RemoveStudentSubAtten/:id', removeStudentAttendanceBySubject);
-router.put('/RemoveStudentAtten/:id', removeStudentAttendance)
+router.get("/Students/:id", authenticate, getStudents);
+router.get("/Student/:id", authenticate, getStudentDetail);
+router.delete("/Student/:id", authenticate, authorize('Admin'), deleteStudent);
+router.put("/Student/:id", authenticate, authorize('Admin', 'Student'), updateStudent);
+router.put('/UpdateExamResult/:id', authenticate, authorize('Admin', 'Teacher'), updateExamResult);
+router.put('/StudentAttendance/:id', authenticate, authorize('Admin', 'Teacher'), studentAttendance);
+router.put('/RemoveAllStudentsSubAtten/:id', authenticate, authorize('Admin', 'Teacher'), clearAllStudentsAttendanceBySubject);
+router.put('/RemoveAllStudentsAtten/:id', authenticate, authorize('Admin'), clearAllStudentsAttendance);
+router.put('/RemoveStudentSubAtten/:id', authenticate, authorize('Admin', 'Teacher'), removeStudentAttendanceBySubject);
+router.put('/RemoveStudentAtten/:id', authenticate, authorize('Admin'), removeStudentAttendance);
 
 // Teacher
-
-router.post('/TeacherReg', teacherRegister);
-router.post('/TeacherLogin', teacherLogIn)
-
-router.get("/Teachers/:id", getTeachers)
-router.get("/Teacher/:id", getTeacherDetail)
-
-router.delete("/Teacher/:id", deleteTeacher)
-
-router.put("/TeacherSubject", updateTeacherSubject)
-
-router.post('/TeacherAttendance/:id', teacherAttendance)
+router.get("/Teachers/:id", authenticate, getTeachers);
+router.get("/Teacher/:id", authenticate, getTeacherDetail);
+router.delete("/Teacher/:id", authenticate, authorize('Admin'), deleteTeacher);
+router.put("/TeacherSubject", authenticate, authorize('Admin'), updateTeacherSubject);
+router.post('/TeacherAttendance/:id', authenticate, authorize('Admin'), teacherAttendance);
 
 // Notice
-
-router.post('/NoticeCreate', noticeCreate);
-
-router.get('/NoticeList/:id', noticeList);
-
-router.delete("/Notices/:id", deleteNotices)
-router.delete("/Notice/:id", deleteNotice)
-
-router.put("/Notice/:id", updateNotice)
+router.post('/NoticeCreate', authenticate, authorize('Admin'), noticeCreate);
+router.get('/NoticeList/:id', authenticate, noticeList);
+router.delete("/Notices/:id", authenticate, authorize('Admin'), deleteNotices);
+router.delete("/Notice/:id", authenticate, authorize('Admin'), deleteNotice);
+router.put("/Notice/:id", authenticate, authorize('Admin'), updateNotice);
 
 // Complain
-
-router.post('/ComplainCreate', complainCreate);
-
-router.get('/ComplainList/:id', complainList);
+router.post('/ComplainCreate', authenticate, authorize('Student'), complainCreate);
+router.get('/ComplainList/:id', authenticate, complainList);
 
 // Sclass
-
-router.post('/SclassCreate', sclassCreate);
-
-router.get('/SclassList/:id', sclassList);
-router.get("/Sclass/:id", getSclassDetail)
-
-router.get("/Sclass/Students/:id", getSclassStudents)
-
-router.delete("/Sclasses/:id", deleteSclasses)
-router.delete("/Sclass/:id", deleteSclass)
+router.post('/SclassCreate', authenticate, authorize('Admin'), sclassCreate);
+router.get('/SclassList/:id', authenticate, sclassList);
+router.get("/Sclass/:id", authenticate, getSclassDetail);
+router.get("/Sclass/Students/:id", authenticate, getSclassStudents);
+router.delete("/Sclasses/:id", authenticate, authorize('Admin'), deleteSclasses);
+router.delete("/Sclass/:id", authenticate, authorize('Admin'), deleteSclass);
 
 // Subject
-
-router.post('/SubjectCreate', subjectCreate);
-
-router.get('/AllSubjects/:id', allSubjects);
-router.get('/ClassSubjects/:id', classSubjects);
-router.get("/Subject/:id", getSubjectDetail)
-
-router.delete("/Subject/:id", deleteSubject)
+router.post('/SubjectCreate', authenticate, authorize('Admin'), subjectCreate);
+router.get('/AllSubjects/:id', authenticate, allSubjects);
+router.get('/ClassSubjects/:id', authenticate, classSubjects);
+router.get("/Subject/:id", authenticate, getSubjectDetail);
+router.delete("/Subject/:id", authenticate, authorize('Admin'), deleteSubject);
 
 module.exports = router;

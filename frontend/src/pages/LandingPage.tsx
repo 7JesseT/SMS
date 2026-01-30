@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import Grid from "@mui/material/Grid";
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { APP_NAME } from '../utils/constants';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -23,6 +24,7 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const { logout } = useAuth();
   const [openDialog, setOpenDialog] = useState(false);
   const [actionType, setActionType] = useState<'register' | 'login'>('login');
 
@@ -44,6 +46,10 @@ const LandingPage: React.FC = () => {
 
   const handleUserTypeSelect = (userType: 'Student' | 'Teacher' | 'Admin') => {
     setOpenDialog(false);
+    
+    // Logout any existing user before navigating to login/register
+    logout();
+    
     if (userType === 'Student') {
       if (actionType === 'register') {
         navigate('/register');
