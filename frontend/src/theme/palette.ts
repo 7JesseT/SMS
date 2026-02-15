@@ -1,12 +1,12 @@
 // Custom color palette for School Management System
-// Primary color: Blue
+// Primary color: Gold
 
 export const palette = {
   primary: {
-    main: '#2196F3',
-    light: '#64B5F6',
-    dark: '#1976D2',
-    contrastText: '#FFFFFF',
+    main: '#FFD700',
+    light: '#FFE55C',
+    dark: '#C7A600',
+    contrastText: 'rgba(0, 0, 0, 0.87)',
   },
   secondary: {
     main: '#FFFFFF',

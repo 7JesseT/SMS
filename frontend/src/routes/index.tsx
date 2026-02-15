@@ -19,11 +19,18 @@ import ClassesManagementPage from '../pages/admin/ClassesManagementPage';
 import SubjectsManagementPage from '../pages/admin/SubjectsManagementPage';
 import NoticesManagementPage from '../pages/admin/NoticesManagementPage';
 import ComplaintsPage from '../pages/admin/ComplaintsPage';
+import { AdminCalendarManagementPage } from '../pages/admin/AdminCalendarManagementPage';
+import { AdminPrayerScheduleManagementPage } from '../pages/admin/AdminPrayerScheduleManagementPage';
+import { AdminMarksManagementPage } from '../pages/admin/AdminMarksManagementPage';
 
 // Teacher Pages
 import TeacherDashboard from '../pages/teacher/TeacherDashboard';
 import TeacherProfilePage from '../pages/teacher/TeacherProfilePage';
 import ReportAttendancePage from '../pages/teacher/ReportAttendancePage';
+import { MarksInputPage } from '../pages/teacher/MarksInputPage';
+import { StudentReportPage } from '../pages/teacher/StudentReportPage';
+import { TeacherAnnouncementsPage } from '../pages/teacher/TeacherAnnouncementsPage';
+import { TeacherCalendarPage } from '../pages/teacher/TeacherCalendarPage';
 
 // Student Pages
 import StudentDashboard from '../pages/student/StudentDashboard';
@@ -33,6 +40,11 @@ import StudentNoticesPage from '../pages/student/NoticesPage';
 import StudentComplaintsPage from '../pages/student/ComplaintsPage';
 import StudentProfilePage from '../pages/student/ProfilePage';
 import StudentSubjectsPage from '../pages/student/SubjectsPage';
+import ProfileEditPage from '../pages/student/ProfileEditPage';
+import ExamResultsPage from '../pages/student/ExamResultsPage';
+import { AnnouncementsPage } from '../pages/student/AnnouncementsPage';
+import AcademicCalendarPage from '../pages/student/AcademicCalendarPage';
+import PrayerSchedulePage from '../pages/student/PrayerSchedulePage';
 
 import { ProtectedRoute } from '../components/auth/ProtectedRoute';
 
@@ -122,6 +134,9 @@ const AppRouter: React.FC = () => {
           <Route path="subjects" element={<SubjectsManagementPage />} />
           <Route path="notices" element={<NoticesManagementPage />} />
           <Route path="complaints" element={<ComplaintsPage />} />
+          <Route path="calendar" element={<AdminCalendarManagementPage />} />
+          <Route path="prayer-schedule" element={<AdminPrayerScheduleManagementPage />} />
+          <Route path="marks" element={<AdminMarksManagementPage />} />
         </Route>
 
         {/* Teacher Routes */}
@@ -136,6 +151,10 @@ const AppRouter: React.FC = () => {
           <Route path="dashboard" element={<TeacherDashboard />} />
           <Route path="profile" element={<TeacherProfilePage />} />
           <Route path="attendance" element={<ReportAttendancePage />} />
+          <Route path="marks-input" element={<MarksInputPage />} />
+          <Route path="student-report" element={<StudentReportPage />} />
+          <Route path="announcements" element={<TeacherAnnouncementsPage />} />
+          <Route path="calendar" element={<TeacherCalendarPage />} />
         </Route>
 
         {/* Student Routes */}
@@ -148,12 +167,17 @@ const AppRouter: React.FC = () => {
           }
         >
           <Route path="dashboard" element={<StudentDashboard />} />
+          <Route path="profile" element={<StudentProfilePage />} />
+          <Route path="profile/edit" element={<ProfileEditPage />} />
+          <Route path="exam-results" element={<ExamResultsPage />} />
+          <Route path="notices" element={<StudentNoticesPage />} />
+          <Route path="calendar" element={<AcademicCalendarPage />} />
+          <Route path="prayers" element={<PrayerSchedulePage />} />
           <Route path="grades" element={<StudentGradesPage />} />
           <Route path="attendance" element={<StudentAttendancePage />} />
           <Route path="subjects" element={<StudentSubjectsPage />} />
-          <Route path="notices" element={<StudentNoticesPage />} />
           <Route path="complaints" element={<StudentComplaintsPage />} />
-          <Route path="profile" element={<StudentProfilePage />} />
+          <Route path="announcements" element={<AnnouncementsPage />} />
         </Route>
 
         {/* 404 Route */}

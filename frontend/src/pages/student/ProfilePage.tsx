@@ -12,6 +12,7 @@ import {
   CircularProgress,
   Divider,
   Container,
+  Grid,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -20,99 +21,36 @@ import {
   Person as PersonIcon,
   Logout as LogoutIcon,
   ArrowBack as ArrowBackIcon,
+  CalendarToday as CalendarIcon,
+  Home as HomeIcon,
+  People as GuardianIcon,
+  Photo as PhotoIcon,
+  Assessment as GradesIcon,
 } from '@mui/icons-material';
-import { studentApi } from '../../services/api';
+import { useStudentDetails, useUpdateStudentProfile } from '../../services/studentApi';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-
-interface StudentDetails {
-  _id: string;
-  name: string;
-  rollNum: number;
-  sclassName: any;
-  school: any;
-  role: string;
-  examResult: any[];
-  attendance: any[];
-}
+import { format } from 'date-fns';
 
 const ProfilePage: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [student, setStudent] = useState<StudentDetails | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [editedName, setEditedName] = useState('');
+  const { data: student, isLoading, error: fetchError } = useStudentDetails(user?.id);
+  const updateProfile = useUpdateStudentProfile();
+  
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  useEffect(() => {
-    fetchStudentDetails();
-  }, []);
-
-  const fetchStudentDetails = async () => {
-    if (!user?.id) return;
-    
-    setLoading(true);
-    setError('');
-    
-    try {
-      const response = await studentApi.getDetails(user.id);
-      setStudent(response.data);
-      setEditedName(response.data.name);
-    } catch (err: any) {
-      console.error('Error fetching student details:', err);
-      setError('Failed to load student details');
-    } finally {
-      setLoading(false);
-    }
+  const handleViewGrades = () => {
+    navigate('/student/exam-results');
   };
 
-  const handleEdit = () => {
-    setEditing(true);
-    setError('');
-    setSuccess('');
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
-  const handleCancel = () => {
-    setEditing(false);
-    setEditedName(student?.name || '');
-    setError('');
-  };
-
-  const handleSave = async () => {
-    if (!editedName.trim()) {
-      setError('Name cannot be empty');
-      return;
-    }
-
-    if (!user?.id) return;
-
-    setSaving(true);
-    setError('');
-
-    try {
-      const response = await studentApi.update(user.id, { name: editedName.trim() });
-      setStudent(response.data);
-      setEditing(false);
-      setSuccess('Profile updated successfully!');
-      
-      // Update user name in localStorage
-      const authUser = JSON.parse(localStorage.getItem('authUser') || '{}');
-      authUser.name = editedName.trim();
-      localStorage.setItem('authUser', JSON.stringify(authUser));
-
-      setTimeout(() => setSuccess(''), 3000);
-    } catch (err: any) {
-      console.error('Error updating student:', err);
-      setError(err.response?.data?.message || 'Failed to update profile');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
         <Container maxWidth="lg">
@@ -128,16 +66,13 @@ const ProfilePage: React.FC = () => {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
         <Container maxWidth="lg">
-          <Alert severity="error">Failed to load student details</Alert>
+          <Alert severity="error">
+            {fetchError instanceof Error ? fetchError.message : 'Failed to load student details'}
+          </Alert>
         </Container>
       </Box>
     );
   }
-
-const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
@@ -163,18 +98,17 @@ const handleLogout = () => {
 
         <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
           <Typography variant="h4" fontWeight="bold">
-          Student Details
-        </Typography>
-        {!editing && (
+            My Profile
+          </Typography>
           <Button
             variant="contained"
+            color="primary"
             startIcon={<EditIcon />}
-            onClick={handleEdit}
+            onClick={() => navigate('/student/profile/edit')}
           >
             Edit Profile
           </Button>
-        )}
-      </Box>
+        </Box>
 
       {success && (
         <Alert severity="success" sx={{ mb: 3 }}>
@@ -188,143 +122,159 @@ const handleLogout = () => {
         </Alert>
       )}
 
-      <Card>
+      {/* Profile Card */}
+      <Card sx={{ mb: 3 }}>
         <CardContent sx={{ p: 4 }}>
-              <Box display="flex" alignItems="start" gap={3}>
+              <Box display="flex" alignItems="start" gap={3} mb={4}>
                 <Avatar
+                  src={student.photo || undefined}
                   sx={{ 
-                    width: 100, 
-                    height: 100, 
+                    width: 120, 
+                    height: 120, 
                     bgcolor: 'primary.main', 
-                    fontSize: '2.5rem' 
+                    fontSize: '3rem' 
                   }}
                 >
-                  {student.name.charAt(0).toUpperCase()}
+                  {!student.photo && student.name.charAt(0).toUpperCase()}
                 </Avatar>
                 
                 <Box flex={1}>
-                  {!editing ? (
-                    <>
-                      <Typography variant="h5" fontWeight="bold" gutterBottom>
-                        {student.name}
-                      </Typography>
-                      <Box display="flex" gap={1} mb={2}>
-                        <Chip 
-                          icon={<PersonIcon />}
-                          label={`Roll No: ${student.rollNum}`} 
-                          color="primary" 
-                        />
-                        <Chip 
-                          label={student.role} 
-                          color="success" 
-                        />
-                      </Box>
-                    </>
-                  ) : (
-                    <Box mb={2}>
-                      <TextField
-                        fullWidth
-                        label="Full Name"
-                        value={editedName}
-                        onChange={(e) => setEditedName(e.target.value)}
-                        disabled={saving}
-                        sx={{ mb: 2 }}
+                  <Typography variant="h5" fontWeight="bold" gutterBottom>
+                    {student.name}
+                  </Typography>
+                  <Box display="flex" gap={1} mb={2} flexWrap="wrap">
+                    <Chip 
+                      icon={<PersonIcon />}
+                      label={`Roll No: ${student.rollNum}`} 
+                      color="primary" 
+                    />
+                    <Chip 
+                      label={student.role} 
+                      color="success" 
+                    />
+                    {student.sclassName && (
+                      <Chip 
+                        label={student.sclassName.sclassName} 
+                        color="info" 
                       />
-                      <Box display="flex" gap={1}>
-                        <Chip 
-                          icon={<PersonIcon />}
-                          label={`Roll No: ${student.rollNum}`} 
-                          color="primary" 
-                        />
-                        <Chip 
-                          label={student.role} 
-                          color="success" 
-                        />
-                      </Box>
-                    </Box>
-                  )}
-
-                  <Divider sx={{ my: 3 }} />
-
-                  {/* Details Grid */}
-                  <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={3}>
-                    <Box>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
-                        Student ID
-                      </Typography>
-                      <Typography variant="body1" fontWeight="medium">
-                        {student._id}
-                      </Typography>
-                    </Box>
-
-                    <Box>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
-                        Roll Number
-                      </Typography>
-                      <Typography variant="body1" fontWeight="medium">
-                        {student.rollNum}
-                      </Typography>
-                    </Box>
-
-                    <Box>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
-                        Class
-                      </Typography>
-                      <Typography variant="body1" fontWeight="medium">
-                        {student.sclassName?.sclassName || 'Not assigned'}
-                      </Typography>
-                    </Box>
-
-                    <Box>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
-                        Total Subjects
-                      </Typography>
-                      <Typography variant="body1" fontWeight="medium">
-                        {student.examResult?.length || 0}
-                      </Typography>
-                    </Box>
-
-                    <Box>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
-                        Attendance Records
-                      </Typography>
-                      <Typography variant="body1" fontWeight="medium">
-                        {student.attendance?.length || 0}
-                      </Typography>
-                    </Box>
-
-                    <Box>
-                      <Typography variant="body2" color="text.secondary" gutterBottom>
-                        Exam Results
-                      </Typography>
-                      <Typography variant="body1" fontWeight="medium">
-                        {student.examResult?.length || 0}
-                      </Typography>
-                    </Box>
+                    )}
                   </Box>
-
-                  {editing && (
-                    <Box display="flex" gap={2} mt={4}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        startIcon={saving ? <CircularProgress size={20} /> : <SaveIcon />}
-                        onClick={handleSave}
-                        disabled={saving || !editedName.trim()}
-                      >
-                        {saving ? 'Saving...' : 'Save Changes'}
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        startIcon={<CancelIcon />}
-                        onClick={handleCancel}
-                        disabled={saving}
-                      >
-                        Cancel
-                      </Button>
-                    </Box>
-                  )}
+                  <Typography variant="body2" color="text.secondary">
+                    {student.school?.schoolName || 'School'}
+                  </Typography>
                 </Box>
+              </Box>
+
+              <Divider sx={{ my: 3 }} />
+
+              {/* Personal Information */}
+              <Typography variant="h6" fontWeight="bold" gutterBottom mb={2}>
+                Personal Information
+              </Typography>
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={6}>
+                  <Box display="flex" alignItems="center" gap={1} mb={1}>
+                    <CalendarIcon color="action" fontSize="small" />
+                    <Typography variant="body2" color="text.secondary">
+                      Date of Birth
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" fontWeight="medium">
+                    {student.dateOfBirth 
+                      ? format(new Date(student.dateOfBirth), 'MMMM dd, yyyy')
+                      : 'Not provided'}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <Box display="flex" alignItems="center" gap={1} mb={1}>
+                    <HomeIcon color="action" fontSize="small" />
+                    <Typography variant="body2" color="text.secondary">
+                      Address
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" fontWeight="medium">
+                    {student.address || 'Not provided'}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <Box display="flex" alignItems="center" gap={1} mb={1}>
+                    <GuardianIcon color="action" fontSize="small" />
+                    <Typography variant="body2" color="text.secondary">
+                      Guardian Name
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" fontWeight="medium">
+                    {student.guardianName || 'Not provided'}
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={12} sm={6}>
+                  <Box display="flex" alignItems="center" gap={1} mb={1}>
+                    <PersonIcon color="action" fontSize="small" />
+                    <Typography variant="body2" color="text.secondary">
+                      Student ID
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" fontWeight="medium" sx={{ wordBreak: 'break-all' }}>
+                    {student._id}
+                  </Typography>
+                </Grid>
+              </Grid>
+
+              <Divider sx={{ my: 3 }} />
+
+              {/* Academic Information */}
+              <Typography variant="h6" fontWeight="bold" gutterBottom mb={2}>
+                Academic Information
+              </Typography>
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={4}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Class
+                    </Typography>
+                    <Typography variant="h6" fontWeight="medium" color="primary.main">
+                      {student.sclassName?.sclassName || 'Not assigned'}
+                    </Typography>
+                  </Box>
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Exam Results
+                    </Typography>
+                    <Typography variant="h6" fontWeight="medium" color="success.main">
+                      {student.examResult?.length || 0}
+                    </Typography>
+                  </Box>
+                </Grid>
+
+                <Grid item xs={12} sm={4}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Attendance Records
+                    </Typography>
+                    <Typography variant="h6" fontWeight="medium" color="info.main">
+                      {student.attendance?.length || 0}
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
+
+              <Box mt={3}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<GradesIcon />}
+                  onClick={handleViewGrades}
+                  fullWidth
+                  sx={{ py: 1.5 }}
+                >
+                  View Exam Results
+                </Button>
               </Box>
             </CardContent>
           </Card>

@@ -313,31 +313,34 @@ const LandingPage: React.FC = () => {
                   }}
                 >
                   <Button
-                    variant="contained"
+                    variant="outlined"
                     size="large"
                     onClick={() => handleOpenDialog('register')}
                     endIcon={<ArrowForwardIcon />}
                     sx={{
-                      bgcolor: 'white',
-                      color: 'primary.main',
+                      borderColor: 'rgba(255,255,255,0.8)',
+                      color: 'white',
                       px: { xs: 4, md: 5 },
                       py: { xs: 1.8, md: 1.75 },
                       fontSize: { xs: '1rem', md: '1.05rem' },
                       fontWeight: 700,
                       borderRadius: 2.5,
+                      borderWidth: 2,
                       textTransform: 'none',
-                      boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
+                      backdropFilter: 'blur(10px)',
+                      bgcolor: 'rgba(255,255,255,0.08)',
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
-                        bgcolor: 'rgba(255,255,255,0.95)',
+                        borderColor: 'white',
+                        borderWidth: 2,
+                        bgcolor: 'rgba(255,255,255,0.2)',
                         transform: 'translateY(-4px)',
-                        boxShadow: '0 20px 50px rgba(0,0,0,0.3)',
                       },
                     }}
                   >
-                    Get Started Free
+                    Get Started
                   </Button>
-                  <Button
+                  {/* <Button
                     variant="outlined"
                     size="large"
                     onClick={() => handleOpenDialog('login')}
@@ -363,7 +366,7 @@ const LandingPage: React.FC = () => {
                     }}
                   >
                     Watch Demo
-                  </Button>
+                  </Button> */}
                 </Box>
               </Box>
             </Grid>

@@ -1,0 +1,1507 @@
+{
+	"info": {
+		"_postman_id": "sms-api-collection-2026",
+		"name": "School Management System API",
+		"description": "Complete API collection for the School Management System with authentication, student management, teacher management, classes, subjects, notices, complaints, calendar, and prayer schedules.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:10000",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "adminId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "studentId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "teacherId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "classId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "subjectId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "noticeId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "calendarId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "prayerId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "schoolId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Admin Registration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response._id) pm.collectionVariables.set('adminId', response._id);",
+									"    if (response.schoolId) pm.collectionVariables.set('schoolId', response.schoolId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Administrator\",\n  \"email\": \"admin@school.com\",\n  \"password\": \"Admin@123\",\n  \"schoolName\": \"Greenwood High School\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/AdminReg",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"AdminReg"
+							]
+						},
+						"description": "Register a new admin and create a school"
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.token) pm.collectionVariables.set('authToken', response.token);",
+									"    if (response._id) pm.collectionVariables.set('adminId', response._id);",
+									"    if (response.schoolId) pm.collectionVariables.set('schoolId', response.schoolId);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@school.com\",\n  \"password\": \"Admin@123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/AdminLogin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"AdminLogin"
+							]
+						},
+						"description": "Admin login to get authentication token"
+					},
+					"response": []
+				},
+				{
+					"name": "Student Registration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response._id) pm.collectionVariables.set('studentId', response._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sarah Johnson\",\n  \"email\": \"sarah.johnson@student.com\",\n  \"password\": \"Student@123\",\n  \"rollNum\": \"2026001\",\n  \"sclassName\": \"{{classId}}\",\n  \"adminID\": \"{{adminId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/StudentReg",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"StudentReg"
+							]
+						},
+						"description": "Register a new student"
+					},
+					"response": []
+				},
+				{
+					"name": "Student Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.token) pm.collectionVariables.set('authToken', response.token);",
+									"    if (response._id) pm.collectionVariables.set('studentId', response._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"sarah.johnson@student.com\",\n  \"password\": \"Student@123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/StudentLogin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"StudentLogin"
+							]
+						},
+						"description": "Student login to get authentication token"
+					},
+					"response": []
+				},
+				{
+					"name": "Teacher Registration",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response._id) pm.collectionVariables.set('teacherId', response._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Dr. Michael Roberts\",\n  \"email\": \"michael.roberts@teacher.com\",\n  \"password\": \"Teacher@123\",\n  \"teachSubject\": \"{{subjectId}}\",\n  \"adminID\": \"{{adminId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/TeacherReg",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"TeacherReg"
+							]
+						},
+						"description": "Register a new teacher"
+					},
+					"response": []
+				},
+				{
+					"name": "Teacher Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    if (response.token) pm.collectionVariables.set('authToken', response.token);",
+									"    if (response._id) pm.collectionVariables.set('teacherId', response._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"michael.roberts@teacher.com\",\n  \"password\": \"Teacher@123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/TeacherLogin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"TeacherLogin"
+							]
+						},
+						"description": "Teacher login to get authentication token"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get currently authenticated user details"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Logout current user"
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for admin, student, and teacher registration and login"
+		},
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Get Admin Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Admin/{{adminId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Admin",
+								"{{adminId}}"
+							]
+						},
+						"description": "Get admin details by ID (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Admin management endpoints"
+		},
+		{
+			"name": "Classes",
+			"item": [
+				{
+					"name": "Create Class",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response._id) pm.collectionVariables.set('classId', response._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"sclassName\": \"Grade 10-A\",\n  \"adminID\": \"{{adminId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/SclassCreate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"SclassCreate"
+							]
+						},
+						"description": "Create a new class (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Class List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/SclassList/{{adminId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"SclassList",
+								"{{adminId}}"
+							]
+						},
+						"description": "Get all classes for a school"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Class Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Sclass/{{classId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Sclass",
+								"{{classId}}"
+							]
+						},
+						"description": "Get specific class details"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Class Students",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Sclass/Students/{{classId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Sclass",
+								"Students",
+								"{{classId}}"
+							]
+						},
+						"description": "Get all students in a specific class"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Class",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Sclass/{{classId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Sclass",
+								"{{classId}}"
+							]
+						},
+						"description": "Delete a specific class (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Multiple Classes",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Sclasses/{{adminId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Sclasses",
+								"{{adminId}}"
+							]
+						},
+						"description": "Delete all classes for a school (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Class management endpoints"
+		},
+		{
+			"name": "Subjects",
+			"item": [
+				{
+					"name": "Create Subject",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response._id) pm.collectionVariables.set('subjectId', response._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subName\": \"Mathematics\",\n  \"subCode\": \"MATH101\",\n  \"sessions\": 5,\n  \"sclassName\": \"{{classId}}\",\n  \"adminID\": \"{{adminId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/SubjectCreate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"SubjectCreate"
+							]
+						},
+						"description": "Create a new subject (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Subjects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/AllSubjects/{{adminId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"AllSubjects",
+								"{{adminId}}"
+							]
+						},
+						"description": "Get all subjects for a school"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Class Subjects",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ClassSubjects/{{classId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ClassSubjects",
+								"{{classId}}"
+							]
+						},
+						"description": "Get all subjects for a specific class"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Subject Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Subject/{{subjectId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Subject",
+								"{{subjectId}}"
+							]
+						},
+						"description": "Get specific subject details"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Subject",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Subject/{{subjectId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Subject",
+								"{{subjectId}}"
+							]
+						},
+						"description": "Delete a subject (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Subject management endpoints"
+		},
+		{
+			"name": "Students",
+			"item": [
+				{
+					"name": "Get Students",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Students/{{adminId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Students",
+								"{{adminId}}"
+							]
+						},
+						"description": "Get all students for a school"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Student/{{studentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Student",
+								"{{studentId}}"
+							]
+						},
+						"description": "Get specific student details"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Student",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sarah Johnson Updated\",\n  \"email\": \"sarah.updated@student.com\",\n  \"rollNum\": \"2026001\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/Student/{{studentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Student",
+								"{{studentId}}"
+							]
+						},
+						"description": "Update student details (Admin or Student)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Student Profile",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "photo",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "name",
+									"value": "Sarah Johnson",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "sarah.johnson@student.com",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/StudentProfile/{{studentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"StudentProfile",
+								"{{studentId}}"
+							]
+						},
+						"description": "Update student profile with photo upload (Admin or Student)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Student",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Student/{{studentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Student",
+								"{{studentId}}"
+							]
+						},
+						"description": "Delete a student (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Student Attendance",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subName\": \"{{subjectId}}\",\n  \"status\": \"Present\",\n  \"date\": \"2026-02-12\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/StudentAttendance/{{studentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"StudentAttendance",
+								"{{studentId}}"
+							]
+						},
+						"description": "Mark student attendance for a subject (Admin or Teacher)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Exam Result",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subName\": \"{{subjectId}}\",\n  \"marksObtained\": 85\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/UpdateExamResult/{{studentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"UpdateExamResult",
+								"{{studentId}}"
+							]
+						},
+						"description": "Update student exam result (Admin or Teacher)"
+					},
+					"response": []
+				},
+				{
+					"name": "Bulk Update Exam Results",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"students\": [\n    {\n      \"studentId\": \"{{studentId}}\",\n      \"subName\": \"{{subjectId}}\",\n      \"marksObtained\": 85\n    }\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/BulkUpdateExamResults",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"BulkUpdateExamResults"
+							]
+						},
+						"description": "Bulk update exam results for multiple students (Admin or Teacher)"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Student Subject Attendance",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"subName\": \"{{subjectId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/RemoveStudentSubAtten/{{studentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"RemoveStudentSubAtten",
+								"{{studentId}}"
+							]
+						},
+						"description": "Remove student attendance for a subject (Admin or Teacher)"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Student Attendance",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/RemoveStudentAtten/{{studentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"RemoveStudentAtten",
+								"{{studentId}}"
+							]
+						},
+						"description": "Remove all student attendance (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Clear All Students Subject Attendance",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/RemoveAllStudentsSubAtten/{{classId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"RemoveAllStudentsSubAtten",
+								"{{classId}}"
+							]
+						},
+						"description": "Clear all students' attendance for a subject (Admin or Teacher)"
+					},
+					"response": []
+				},
+				{
+					"name": "Clear All Students Attendance",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/RemoveAllStudentsAtten/{{classId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"RemoveAllStudentsAtten",
+								"{{classId}}"
+							]
+						},
+						"description": "Clear all students' attendance (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Student management endpoints"
+		},
+		{
+			"name": "Teachers",
+			"item": [
+				{
+					"name": "Get Teachers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Teachers/{{adminId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Teachers",
+								"{{adminId}}"
+							]
+						},
+						"description": "Get all teachers for a school"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Teacher Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Teacher/{{teacherId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Teacher",
+								"{{teacherId}}"
+							]
+						},
+						"description": "Get specific teacher details"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Teacher Subject",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"teacherId\": \"{{teacherId}}\",\n  \"teachSubject\": \"{{subjectId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/TeacherSubject",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"TeacherSubject"
+							]
+						},
+						"description": "Update teacher's assigned subject (Admin or Teacher)"
+					},
+					"response": []
+				},
+				{
+					"name": "Teacher Attendance",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Present\",\n  \"date\": \"2026-02-12\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/TeacherAttendance/{{teacherId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"TeacherAttendance",
+								"{{teacherId}}"
+							]
+						},
+						"description": "Mark teacher attendance (Admin or Teacher)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Teacher",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Teacher/{{teacherId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Teacher",
+								"{{teacherId}}"
+							]
+						},
+						"description": "Delete a teacher (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Teacher management endpoints"
+		},
+		{
+			"name": "Notices",
+			"item": [
+				{
+					"name": "Create Notice",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response._id) pm.collectionVariables.set('noticeId', response._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Important School Assembly\",\n  \"details\": \"All students are required to attend the special assembly on Friday at 9 AM in the main hall.\",\n  \"date\": \"2026-02-15\",\n  \"adminID\": \"{{adminId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/NoticeCreate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"NoticeCreate"
+							]
+						},
+						"description": "Create a new notice (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Notice List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/NoticeList/{{adminId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"NoticeList",
+								"{{adminId}}"
+							]
+						},
+						"description": "Get all notices for a school"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Notice",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated: Important School Assembly\",\n  \"details\": \"Assembly time changed to 10 AM.\",\n  \"date\": \"2026-02-15\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/Notice/{{noticeId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Notice",
+								"{{noticeId}}"
+							]
+						},
+						"description": "Update a notice (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Notice",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Notice/{{noticeId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Notice",
+								"{{noticeId}}"
+							]
+						},
+						"description": "Delete a specific notice (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete All Notices",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Notices/{{adminId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Notices",
+								"{{adminId}}"
+							]
+						},
+						"description": "Delete all notices for a school (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Notice management endpoints"
+		},
+		{
+			"name": "Complaints",
+			"item": [
+				{
+					"name": "Create Complaint",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Library Facilities Issue\",\n  \"complaint\": \"The library air conditioning has not been working for the past week, making it difficult to study.\",\n  \"date\": \"2026-02-12\",\n  \"studentID\": \"{{studentId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/ComplainCreate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ComplainCreate"
+							]
+						},
+						"description": "Create a new complaint (Student only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Complaint List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ComplainList/{{adminId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ComplainList",
+								"{{adminId}}"
+							]
+						},
+						"description": "Get all complaints for a school"
+					},
+					"response": []
+				}
+			],
+			"description": "Complaint management endpoints"
+		},
+		{
+			"name": "Academic Calendar",
+			"item": [
+				{
+					"name": "Create Calendar Event",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response._id) pm.collectionVariables.set('calendarId', response._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Mid-Term Examinations\",\n  \"description\": \"Mid-term exams for all grades will be conducted.\",\n  \"startDate\": \"2026-03-15\",\n  \"endDate\": \"2026-03-25\",\n  \"eventType\": \"Examination\",\n  \"schoolId\": \"{{schoolId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/CalendarCreate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"CalendarCreate"
+							]
+						},
+						"description": "Create a new calendar event (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Calendar Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Calendar/{{schoolId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Calendar",
+								"{{schoolId}}"
+							]
+						},
+						"description": "Get all calendar events for a school"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Calendar Event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated: Mid-Term Examinations\",\n  \"description\": \"Mid-term exams schedule has been updated.\",\n  \"startDate\": \"2026-03-16\",\n  \"endDate\": \"2026-03-26\",\n  \"eventType\": \"Examination\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/Calendar/{{calendarId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Calendar",
+								"{{calendarId}}"
+							]
+						},
+						"description": "Update a calendar event (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Calendar Event",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Calendar/{{calendarId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Calendar",
+								"{{calendarId}}"
+							]
+						},
+						"description": "Delete a calendar event (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Academic calendar management endpoints"
+		},
+		{
+			"name": "Prayer Schedule",
+			"item": [
+				{
+					"name": "Create Prayer Schedule",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200 || pm.response.code === 201) {",
+									"    const response = pm.response.json();",
+									"    if (response._id) pm.collectionVariables.set('prayerId', response._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"prayerName\": \"Fajr\",\n  \"time\": \"05:30\",\n  \"date\": \"2026-02-12\",\n  \"schoolId\": \"{{schoolId}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/PrayerCreate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"PrayerCreate"
+							]
+						},
+						"description": "Create a new prayer schedule (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Prayer Schedules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Prayers/{{schoolId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Prayers",
+								"{{schoolId}}"
+							]
+						},
+						"description": "Get all prayer schedules for a school"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Prayer Schedule",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"prayerName\": \"Fajr\",\n  \"time\": \"05:45\",\n  \"date\": \"2026-02-12\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/Prayer/{{prayerId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Prayer",
+								"{{prayerId}}"
+							]
+						},
+						"description": "Update a prayer schedule (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Prayer Schedule",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/Prayer/{{prayerId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"Prayer",
+								"{{prayerId}}"
+							]
+						},
+						"description": "Delete a prayer schedule (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Prayer schedule management endpoints"
+		}
+	]
+}

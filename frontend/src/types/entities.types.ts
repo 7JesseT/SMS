@@ -76,3 +76,38 @@ export interface ComplaintInput {
   complaint: string;
   date: string;
 }
+export interface AcademicCalendar {
+  _id: string;
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  eventType: 'Exam' | 'Holiday' | 'Event' | 'Term' | 'Other';
+  school: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AcademicCalendarInput {
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  eventType: 'Exam' | 'Holiday' | 'Event' | 'Term' | 'Other';
+}
+
+export interface PrayerSchedule {
+  _id: string;
+  prayerName: string;
+  time: string;
+  description?: string;
+  school: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PrayerScheduleInput {
+  prayerName: string;
+  time: string;
+  description?: string;
+}

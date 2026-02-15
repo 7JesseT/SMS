@@ -102,12 +102,14 @@ export const adminApi = {
     details: string;
     date: string;
     adminID: string;
+    target?: 'All' | 'Admin' | 'Teacher' | 'Student';
   }) => api.post<NoticeData>('/NoticeCreate', data),
   getNoticeList: (id: string) => api.get<NoticeData[]>(`/NoticeList/${id}`),
   updateNotice: (id: string, data: {
-    title: string;
-    details: string;
-    date: string;
+    title?: string;
+    details?: string;
+    date?: string;
+    target?: 'All' | 'Admin' | 'Teacher' | 'Student';
   }) => api.put<NoticeData>(`/Notice/${id}`, data),
   deleteNotice: (id: string) => api.delete<NoticeData>(`/Notice/${id}`),
   deleteAllNotices: (id: string) => 

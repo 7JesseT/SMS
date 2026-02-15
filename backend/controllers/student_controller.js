@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const Student = require('../models/studentSchema.js');
 const Subject = require('../models/subjectSchema.js');
 const { generateToken, getCookieOptions } = require('../middleware/auth.js');
+const { upload } = require('../config/cloudinary.js');
 
 const studentRegister = async (req, res) => {
     try {
@@ -260,6 +261,82 @@ const removeStudentAttendance = async (req, res) => {
     }
 };
 
+// Update student profile with personal information
+const updateStudentProfile = async (req, res) => {
+    try {
+        const { name, dateOfBirth, address, guardianName } = req.body;
+        const updateData = {};
+
+        if (name) updateData.name = name;
+        if (dateOfBirth) updateData.dateOfBirth = dateOfBirth;
+        if (address) updateData.address = address;
+        if (guardianName) updateData.guardianName = guardianName;
+
+        // If photo is uploaded via Cloudinary
+        if (req.file) {
+            updateData.photo = req.file.path;
+        }
+
+        const student = await Student.findByIdAndUpdate(
+            req.params.id,
+            { $set: updateData },
+            { new: true }
+        ).populate("school", "schoolName")
+         .populate("sclassName", "sclassName");
+
+        if (!student) {
+            return res.status(404).json({ message: 'Student not found' });
+        }
+
+        student.password = undefined;
+        res.json(student);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+// Bulk update exam results
+const bulkUpdateExamResults = async (req, res) => {
+    const { students, examName, subName, date, totalMarks } = req.body;
+
+    try {
+        // students is an array of { studentId, marksObtained }
+        const updates = students.map(async (studentData) => {
+            const student = await Student.findById(studentData.studentId);
+            
+            if (!student) {
+                return { studentId: studentData.studentId, success: false, message: 'Student not found' };
+            }
+
+            const existingResultIndex = student.examResult.findIndex(
+                (result) => result.subName.toString() === subName && result.examName === examName
+            );
+
+            if (existingResultIndex !== -1) {
+                student.examResult[existingResultIndex].marksObtained = studentData.marksObtained;
+                student.examResult[existingResultIndex].totalMarks = totalMarks;
+                student.examResult[existingResultIndex].date = date;
+            } else {
+                student.examResult.push({ 
+                    subName, 
+                    marksObtained: studentData.marksObtained,
+                    totalMarks,
+                    examName,
+                    date
+                });
+            }
+
+            await student.save();
+            return { studentId: studentData.studentId, success: true };
+        });
+
+        const results = await Promise.all(updates);
+        res.json({ message: 'Exam results updated', results });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
 
 module.exports = {
     studentRegister,
@@ -270,6 +347,8 @@ module.exports = {
     updateStudent,
     studentAttendance,
     updateExamResult,
+    updateStudentProfile,
+    bulkUpdateExamResults,
 
     clearAllStudentsAttendanceBySubject,
     clearAllStudentsAttendance,

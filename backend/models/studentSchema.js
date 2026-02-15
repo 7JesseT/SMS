@@ -27,6 +27,22 @@ const studentSchema = new mongoose.Schema({
         type: String,
         default: "Student"
     },
+    // New personal information fields
+    photo: {
+        type: String,
+        default: ''
+    },
+    dateOfBirth: {
+        type: Date,
+    },
+    address: {
+        type: String,
+        default: ''
+    },
+    guardianName: {
+        type: String,
+        default: ''
+    },
     examResult: [
         {
             subName: {
@@ -36,6 +52,18 @@ const studentSchema = new mongoose.Schema({
             marksObtained: {
                 type: Number,
                 default: 0
+            },
+            totalMarks: {
+                type: Number,
+                default: 100
+            },
+            examName: {
+                type: String,
+                required: true
+            },
+            date: {
+                type: Date,
+                required: true
             }
         }
     ],

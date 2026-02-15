@@ -17,6 +17,11 @@ const noticeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'admin'
     },
+    target: {
+        type: String,
+        enum: ['All', 'Admin', 'Teacher', 'Student'],
+        default: 'All'
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model("notice", noticeSchema)

@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const { authenticate, authorize } = require('../middleware/auth.js');
+const { upload } = require('../config/cloudinary.js');
 
 // Controllers
 const { adminRegister, adminLogIn, getAdminDetail } = require('../controllers/admin-controller.js');
@@ -16,12 +17,16 @@ const {
     updateStudent,
     studentAttendance,
     updateExamResult,
+    updateStudentProfile,
+    bulkUpdateExamResults,
     clearAllStudentsAttendanceBySubject,
     clearAllStudentsAttendance,
     removeStudentAttendanceBySubject,
     removeStudentAttendance } = require('../controllers/student_controller.js');
 const { subjectCreate, classSubjects, getSubjectDetail, deleteSubject, allSubjects } = require('../controllers/subject-controller.js');
 const { teacherRegister, teacherLogIn, getTeachers, getTeacherDetail, deleteTeacher, updateTeacherSubject, teacherAttendance } = require('../controllers/teacher-controller.js');
+const { createCalendarEvent, getCalendarEvents, updateCalendarEvent, deleteCalendarEvent } = require('../controllers/calendar-controller.js');
+const { createPrayerSchedule, getPrayerSchedules, updatePrayerSchedule, deletePrayerSchedule } = require('../controllers/prayer-controller.js');
 
 // =====================
 // PUBLIC ROUTES (No auth required)
@@ -51,7 +56,9 @@ router.get("/Students/:id", authenticate, getStudents);
 router.get("/Student/:id", authenticate, getStudentDetail);
 router.delete("/Student/:id", authenticate, authorize('Admin'), deleteStudent);
 router.put("/Student/:id", authenticate, authorize('Admin', 'Student'), updateStudent);
+router.put("/StudentProfile/:id", authenticate, authorize('Admin', 'Student'), upload.single('photo'), updateStudentProfile);
 router.put('/UpdateExamResult/:id', authenticate, authorize('Admin', 'Teacher'), updateExamResult);
+router.post('/BulkUpdateExamResults', authenticate, authorize('Admin', 'Teacher'), bulkUpdateExamResults);
 router.put('/StudentAttendance/:id', authenticate, authorize('Admin', 'Teacher'), studentAttendance);
 router.put('/RemoveAllStudentsSubAtten/:id', authenticate, authorize('Admin', 'Teacher'), clearAllStudentsAttendanceBySubject);
 router.put('/RemoveAllStudentsAtten/:id', authenticate, authorize('Admin'), clearAllStudentsAttendance);
@@ -90,5 +97,17 @@ router.get('/AllSubjects/:id', authenticate, allSubjects);
 router.get('/ClassSubjects/:id', authenticate, classSubjects);
 router.get("/Subject/:id", authenticate, getSubjectDetail);
 router.delete("/Subject/:id", authenticate, authorize('Admin'), deleteSubject);
+
+// Academic Calendar
+router.post('/CalendarCreate', authenticate, authorize('Admin'), createCalendarEvent);
+router.get('/Calendar/:schoolId', authenticate, getCalendarEvents);
+router.put('/Calendar/:id', authenticate, authorize('Admin'), updateCalendarEvent);
+router.delete('/Calendar/:id', authenticate, authorize('Admin'), deleteCalendarEvent);
+
+// Prayer Schedule
+router.post('/PrayerCreate', authenticate, authorize('Admin'), createPrayerSchedule);
+router.get('/Prayers/:schoolId', authenticate, getPrayerSchedules);
+router.put('/Prayer/:id', authenticate, authorize('Admin'), updatePrayerSchedule);
+router.delete('/Prayer/:id', authenticate, authorize('Admin'), deletePrayerSchedule);
 
 module.exports = router;

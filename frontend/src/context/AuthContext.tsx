@@ -167,6 +167,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isInitialized,
     login,
     logout,
+    setUser,
     loginAdmin,
     loginStudent,
     loginTeacher,

@@ -9,11 +9,17 @@ export interface LoginCredentials {
 }
 
 export interface AuthUser {
+  _id: string;
   id: string;
   email: string;
   role: UserRole;
   name: string;
   avatar?: string;
+  school?: string;
+  photo?: string;
+  dateOfBirth?: string;
+  address?: string;
+  guardianName?: string;
 }
 
 export interface AuthState {
@@ -25,4 +31,5 @@ export interface AuthState {
 export interface AuthContextType extends AuthState {
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
+  setUser: (user: AuthUser | null) => void;
 }

@@ -13,31 +13,45 @@ import {
   List,
   ListItem,
   Button,
+  CircularProgress,
+  Alert,
+  Container,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import {
   Search as SearchIcon,
   Notifications as NotificationIcon,
   CalendarToday as CalendarIcon,
-  Person as PersonIcon,
+  ArrowBack as ArrowBackIcon,
+  Logout as LogoutIcon,
+  Campaign as CampaignIcon,
 } from '@mui/icons-material';
-import { mockNotices } from '../../data/mockNotices';
+import { useStudentNotices } from '../../services/studentApi';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
 
 const NoticesPage: React.FC = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { data: notices, isLoading, error } = useStudentNotices(user?.id);
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNotice, setSelectedNotice] = useState<string | null>(null);
 
-  // Filter notices for students (target: Student or All)
-  const studentNotices = mockNotices.filter(
-    notice => notice.target === 'Student' || notice.target === 'All'
-  );
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  // Ensure notices is an array
+  const noticesArray = Array.isArray(notices) ? notices : [];
 
   // Filter by search query
-  const filteredNotices = studentNotices.filter(
+  const filteredNotices = noticesArray.filter(
     notice =>
       notice.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      notice.details.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      notice.author.toLowerCase().includes(searchQuery.toLowerCase())
+      notice.details.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Sort by date (most recent first)
@@ -47,235 +61,224 @@ const NoticesPage: React.FC = () => {
 
   const selectedNoticeData = sortedNotices.find(n => n._id === selectedNotice);
 
+  // Calculate stats
+  const thisWeekNotices = noticesArray.filter(n => {
+    const noticeDate = new Date(n.date);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - noticeDate.getTime()) / (1000 * 60 * 60 * 24));
+    return diffDays <= 7;
+  }).length;
+
+  if (isLoading) {
+    return (
+      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
+        <Container maxWidth="lg">
+          <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+            <CircularProgress />
+          </Box>
+        </Container>
+      </Box>
+    );
+  }
+
   return (
-    <Box>
-      <Typography variant="h4" fontWeight="bold" mb={3}>
-        Notices & Announcements
-      </Typography>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
+      <Container maxWidth="lg">
+        {/* Header */}
+        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBackIcon />}
+            onClick={() => navigate('/student/dashboard')}
+          >
+            Back to Dashboard
+          </Button>
+          <Button
+            variant="outlined"
+            color="error"
+            startIcon={<LogoutIcon />}
+            onClick={handleLogout}
+          >
+            Logout
+          </Button>
+        </Box>
 
-      {/* Header Stats */}
-      <Grid container spacing={3} mb={3}>
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={2}>
-                <Avatar sx={{ bgcolor: 'primary.main' }}>
-                  <NotificationIcon />
-                </Avatar>
-                <Box>
-                  <Typography variant="h4" fontWeight="bold">
-                    {studentNotices.length}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Total Notices
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Box display="flex" alignItems="center" gap={2} mb={3}>
+          <CampaignIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+          <Typography variant="h4" fontWeight="bold">
+            Notices & Announcements
+          </Typography>
+        </Box>
 
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={2}>
-                <Avatar sx={{ bgcolor: 'success.main' }}>
-                  <CalendarIcon />
-                </Avatar>
-                <Box>
-                  <Typography variant="h4" fontWeight="bold">
-                    {studentNotices.filter(n => {
-                      const noticeDate = new Date(n.date);
-                      const now = new Date();
-                      const diffDays = Math.floor((now.getTime() - noticeDate.getTime()) / (1000 * 60 * 60 * 24));
-                      return diffDays <= 7;
-                    }).length}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    This Week
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center" gap={2}>
-                <Avatar sx={{ bgcolor: 'info.main' }}>
-                  <PersonIcon />
-                </Avatar>
-                <Box>
-                  <Typography variant="h4" fontWeight="bold">
-                    {studentNotices.filter(n => n.target === 'Student').length}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Student Specific
-                  </Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
-
-      {/* Search Bar */}
-      <TextField
-        fullWidth
-        placeholder="Search notices by title, content, or author..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        sx={{ mb: 3 }}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-        }}
-      />
-
-      {/* Notices Grid */}
-      <Grid container spacing={3}>
-        {/* Notices List */}
-        <Grid size={{ xs: 12, md: selectedNotice ? 6 : 12 }}>
-          <Paper sx={{ p: 2 }}>
-            <Typography variant="h6" fontWeight="bold" mb={2}>
-              All Notices ({sortedNotices.length})
-            </Typography>
-            <List sx={{ maxHeight: 600, overflow: 'auto' }}>
-              {sortedNotices.map((notice, index) => (
-                <React.Fragment key={notice._id}>
-                  <ListItem
-                    sx={{
-                      cursor: 'pointer',
-                      borderRadius: 1,
-                      '&:hover': { bgcolor: 'action.hover' },
-                      bgcolor: selectedNotice === notice._id ? 'action.selected' : 'transparent',
-                    }}
-                    onClick={() => setSelectedNotice(notice._id)}
-                  >
-                    <Box width="100%">
-                      <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
-                        <Typography variant="body1" fontWeight="bold">
-                          {notice.title}
-                        </Typography>
-                        <Chip
-                          label={notice.target}
-                          size="small"
-                          color={notice.target === 'Student' ? 'primary' : 'default'}
-                        />
-                      </Box>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        {notice.details}
-                      </Typography>
-                      <Box display="flex" gap={2} mt={1}>
-                        <Typography variant="caption" color="text.secondary">
-                          <CalendarIcon sx={{ fontSize: 14, mr: 0.5, verticalAlign: 'middle' }} />
-                          {new Date(notice.date).toLocaleDateString()}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          <PersonIcon sx={{ fontSize: 14, mr: 0.5, verticalAlign: 'middle' }} />
-                          {notice.author}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </ListItem>
-                  {index < sortedNotices.length - 1 && <Divider />}
-                </React.Fragment>
-              ))}
-              {sortedNotices.length === 0 && (
-                <Box textAlign="center" py={4}>
-                  <NotificationIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
-                  <Typography color="text.secondary">
-                    No notices found matching your search
-                  </Typography>
-                </Box>
-              )}
-            </List>
-          </Paper>
-        </Grid>
-
-        {/* Notice Detail View */}
-        {selectedNotice && selectedNoticeData && (
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Paper sx={{ p: 3, position: 'sticky', top: 20 }}>
-              <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
-                <Typography variant="h5" fontWeight="bold">
-                  Notice Details
-                </Typography>
-                <Button size="small" onClick={() => setSelectedNotice(null)}>
-                  Close
-                </Button>
-              </Box>
-              <Divider sx={{ mb: 3 }} />
-
-              <Box mb={3}>
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                  {selectedNoticeData.title}
-                </Typography>
-                <Box display="flex" gap={1} mb={2}>
-                  <Chip
-                    label={selectedNoticeData.target}
-                    size="small"
-                    color={selectedNoticeData.target === 'Student' ? 'primary' : 'default'}
-                  />
-                  <Chip
-                    label={new Date(selectedNoticeData.date).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                    size="small"
-                    variant="outlined"
-                  />
-                </Box>
-              </Box>
-
-              <Box mb={3}>
-                <Typography variant="body1" paragraph sx={{ whiteSpace: 'pre-wrap' }}>
-                  {selectedNoticeData.details}
-                </Typography>
-              </Box>
-
-              <Divider sx={{ mb: 2 }} />
-
-              <Box>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  Posted by
-                </Typography>
-                <Box display="flex" alignItems="center" gap={1} mb={1}>
-                  <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
-                    {selectedNoticeData.author.charAt(0)}
-                  </Avatar>
-                  <Typography variant="body1" fontWeight="medium">
-                    {selectedNoticeData.author}
-                  </Typography>
-                </Box>
-                <Typography variant="caption" color="text.secondary">
-                  Published on {new Date(selectedNoticeData.createdAt!).toLocaleDateString('en-US', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </Typography>
-              </Box>
-            </Paper>
-          </Grid>
+        {error && (
+          <Alert severity="error" sx={{ mb: 3 }}>
+            Failed to load notices
+          </Alert>
         )}
-      </Grid>
+
+        {/* Header Stats */}
+        <Grid container spacing={3} mb={3}>
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Box display="flex" alignItems="center" gap={2}>
+                  <Avatar sx={{ bgcolor: 'primary.main' }}>
+                    <NotificationIcon />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="h4" fontWeight="bold">
+                      {noticesArray.length}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Total Notices
+                    </Typography>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={4}>
+            <Card>
+              <CardContent>
+                <Box display="flex" alignItems="center" gap={2}>
+                  <Avatar sx={{ bgcolor: 'success.main' }}>
+                    <CalendarIcon />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="h4" fontWeight="bold">
+                      {thisWeekNotices}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      This Week
+                    </Typography>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {/* Search */}
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <TextField
+              fullWidth
+              placeholder="Search notices..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Notices List */}
+        <Grid container spacing={3}>
+          {/* Notice List */}
+          <Grid item xs={12} md={selectedNoticeData ? 5 : 12}>
+            <Card>
+              <CardContent sx={{ p: 0 }}>
+                {sortedNotices.length === 0 ? (
+                  <Box p={4} textAlign="center">
+                    <Typography variant="h6" color="text.secondary">
+                      {searchQuery ? 'No notices found' : 'No notices available'}
+                    </Typography>
+                  </Box>
+                ) : (
+                  <List sx={{ p: 0 }}>
+                    {sortedNotices.map((notice, index) => (
+                      <React.Fragment key={notice._id}>
+                        <ListItem
+                          sx={{
+                            cursor: 'pointer',
+                            bgcolor: selectedNotice === notice._id ? 'action.selected' : 'transparent',
+                            '&:hover': {
+                              bgcolor: 'action.hover',
+                            },
+                            p: 2,
+                          }}
+                          onClick={() => setSelectedNotice(notice._id)}
+                        >
+                          <Box flex={1}>
+                            <Box display="flex" justifyContent="space-between" alignItems="start" mb={1}>
+                              <Typography variant="subtitle1" fontWeight="bold">
+                                {notice.title}
+                              </Typography>
+                              <Chip
+                                label={notice.target || 'All'}
+                                size="small"
+                                color="primary"
+                                sx={{ ml: 1 }}
+                              />
+                            </Box>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                              }}
+                            >
+                              {notice.details}
+                            </Typography>
+                            <Box display="flex" alignItems="center" gap={2} mt={1}>
+                              <Typography variant="caption" color="text.secondary">
+                                {format(new Date(notice.date), 'MMM dd, yyyy')}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </ListItem>
+                        {index < sortedNotices.length - 1 && <Divider />}
+                      </React.Fragment>
+                    ))}
+                  </List>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Notice Details */}
+          {selectedNoticeData && (
+            <Grid item xs={12} md={7}>
+              <Card>
+                <CardContent sx={{ p: 4 }}>
+                  <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
+                    <Typography variant="h5" fontWeight="bold">
+                      {selectedNoticeData.title}
+                    </Typography>
+                    <Chip
+                      label={selectedNoticeData.target || 'All'}
+                      color="primary"
+                    />
+                  </Box>
+
+                  <Box display="flex" alignItems="center" gap={2} mb={3}>
+                    <CalendarIcon fontSize="small" color="action" />
+                    <Typography variant="body2" color="text.secondary">
+                      {format(new Date(selectedNoticeData.date), 'MMMM dd, yyyy')}
+                    </Typography>
+                  </Box>
+
+                  <Divider sx={{ my: 3 }} />
+
+                  <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>
+                    {selectedNoticeData.details}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+        </Grid>
+      </Container>
     </Box>
   );
 };

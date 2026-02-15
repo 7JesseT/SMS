@@ -24,6 +24,8 @@ export interface Student {
   parentName?: string;
   parentPhone?: string;
   avatar?: string;
+  photo?: string;
+  guardianName?: string;
   status?: Status;
   createdAt?: string;
   updatedAt?: string;
@@ -57,7 +59,18 @@ export interface ExamResult {
   totalMarks: number;
   percentage?: number;
   grade?: string;
-  date?: string;
+  date: string;
+}
+
+export interface BulkExamResultInput {
+  students: {
+    studentId: string;
+    marksObtained: number;
+  }[];
+  examName: string;
+  subName: string;
+  date: string;
+  totalMarks: number;
 }
 
 export interface StudentAttendance {
