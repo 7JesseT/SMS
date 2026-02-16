@@ -7,7 +7,6 @@ import {
   TextField,
   InputAdornment,
   Chip,
-  Avatar,
   Divider,
   Paper,
   List,
@@ -16,6 +15,9 @@ import {
   CircularProgress,
   Alert,
   Container,
+  useTheme,
+  useMediaQuery,
+  Stack,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import {
@@ -34,6 +36,9 @@ import { format } from 'date-fns';
 const NoticesPage: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: notices, isLoading, error } = useStudentNotices(user?.id);
   
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,96 +76,183 @@ const NoticesPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
-        <Container maxWidth="lg">
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-            <CircularProgress />
-          </Box>
-        </Container>
+      <Box 
+        sx={{ 
+          minHeight: '100vh', 
+          bgcolor: 'background.default',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Stack spacing={2} alignItems="center">
+          <CircularProgress size={60} thickness={4} />
+          <Typography variant="body1" color="text.secondary">
+            Loading notices...
+          </Typography>
+        </Stack>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
-      <Container maxWidth="lg">
-        {/* Header */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate('/student/dashboard')}
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 4 }}>
+      {/* Header Section with Gradient Background */}
+      <Box
+        sx={{
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          pt: 3,
+          pb: 8,
+          mb: -4,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Stack
+            direction={isSmallScreen ? 'column' : 'row'}
+            justifyContent="space-between"
+            alignItems={isSmallScreen ? 'stretch' : 'center'}
+            spacing={2}
+            mb={3}
           >
-            Back to Dashboard
-          </Button>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<LogoutIcon />}
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
-        </Box>
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate('/student/dashboard')}
+              sx={{
+                color: 'white',
+                borderColor: 'rgba(255,255,255,0.3)',
+                '&:hover': {
+                  borderColor: 'white',
+                  bgcolor: 'rgba(255,255,255,0.1)',
+                },
+              }}
+            >
+              Dashboard
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<LogoutIcon />}
+              onClick={handleLogout}
+              sx={{
+                color: 'white',
+                borderColor: 'rgba(255,255,255,0.3)',
+                '&:hover': {
+                  borderColor: 'rgba(244,67,54,0.8)',
+                  bgcolor: 'rgba(244,67,54,0.1)',
+                },
+              }}
+            >
+              Logout
+            </Button>
+          </Stack>
 
-        <Box display="flex" alignItems="center" gap={2} mb={3}>
-          <CampaignIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-          <Typography variant="h4" fontWeight="bold">
-            Notices & Announcements
-          </Typography>
-        </Box>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <CampaignIcon sx={{ color: 'white', fontSize: isMobile ? 28 : 32 }} />
+            <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold" color="white">
+              Notices & Announcements
+            </Typography>
+          </Stack>
+        </Container>
+      </Box>
+
+      <Container maxWidth="lg">
 
         {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
+          <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
             Failed to load notices
           </Alert>
         )}
 
         {/* Header Stats */}
         <Grid container spacing={3} mb={3}>
-          <Grid item xs={12} sm={6} md={4}>
-            <Card>
-              <CardContent>
-                <Box display="flex" alignItems="center" gap={2}>
-                  <Avatar sx={{ bgcolor: 'primary.main' }}>
-                    <NotificationIcon />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="h4" fontWeight="bold">
-                      {noticesArray.length}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Total Notices
-                    </Typography>
-                  </Box>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 2.5,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  borderColor: 'primary.main',
+                  boxShadow: theme.shadows[4],
+                },
+              }}
+            >
+              <Box display="flex" alignItems="center" gap={2}>
+                <Box
+                  sx={{
+                    p: 1.5,
+                    borderRadius: 2,
+                    bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                  }}
+                >
+                  <NotificationIcon sx={{ fontSize: 28 }} />
                 </Box>
-              </CardContent>
-            </Card>
+                <Box>
+                  <Typography variant="h4" fontWeight="bold">
+                    {noticesArray.length}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" fontWeight={500}>
+                    Total Notices
+                  </Typography>
+                </Box>
+              </Box>
+            </Paper>
           </Grid>
 
-          <Grid item xs={12} sm={6} md={4}>
-            <Card>
-              <CardContent>
-                <Box display="flex" alignItems="center" gap={2}>
-                  <Avatar sx={{ bgcolor: 'success.main' }}>
-                    <CalendarIcon />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="h4" fontWeight="bold">
-                      {thisWeekNotices}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      This Week
-                    </Typography>
-                  </Box>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 2.5,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  borderColor: 'success.main',
+                  boxShadow: theme.shadows[4],
+                },
+              }}
+            >
+              <Box display="flex" alignItems="center" gap={2}>
+                <Box
+                  sx={{
+                    p: 1.5,
+                    borderRadius: 2,
+                    bgcolor: 'success.lighter',
+                    color: 'success.main',
+                  }}
+                >
+                  <CalendarIcon sx={{ fontSize: 28 }} />
                 </Box>
-              </CardContent>
-            </Card>
+                <Box>
+                  <Typography variant="h4" fontWeight="bold">
+                    {thisWeekNotices}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" fontWeight={500}>
+                    This Week
+                  </Typography>
+                </Box>
+              </Box>
+            </Paper>
           </Grid>
         </Grid>
 
         {/* Search */}
-        <Card sx={{ mb: 3 }}>
+        <Card
+          elevation={0}
+          sx={{
+            mb: 3,
+            borderRadius: 2,
+            border: '1px solid',
+            borderColor: 'divider',
+          }}
+        >
           <CardContent>
             <TextField
               fullWidth
@@ -174,6 +266,13 @@ const NoticesPage: React.FC = () => {
                   </InputAdornment>
                 ),
               }}
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    border: 'none',
+                  },
+                },
+              }}
             />
           </CardContent>
         </Card>
@@ -181,11 +280,19 @@ const NoticesPage: React.FC = () => {
         {/* Notices List */}
         <Grid container spacing={3}>
           {/* Notice List */}
-          <Grid item xs={12} md={selectedNoticeData ? 5 : 12}>
-            <Card>
+          <Grid size={{ xs: 12, md: selectedNoticeData ? 5 : 12 }}>
+            <Card
+              elevation={0}
+              sx={{
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+              }}
+            >
               <CardContent sx={{ p: 0 }}>
                 {sortedNotices.length === 0 ? (
                   <Box p={4} textAlign="center">
+                    <CampaignIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
                     <Typography variant="h6" color="text.secondary">
                       {searchQuery ? 'No notices found' : 'No notices available'}
                     </Typography>
@@ -213,8 +320,12 @@ const NoticesPage: React.FC = () => {
                               <Chip
                                 label={notice.target || 'All'}
                                 size="small"
-                                color="primary"
-                                sx={{ ml: 1 }}
+                                sx={{
+                                  ml: 1,
+                                  bgcolor: 'primary.lighter',
+                                  color: 'primary.main',
+                                  fontWeight: 600,
+                                }}
                               />
                             </Box>
                             <Typography
@@ -248,8 +359,15 @@ const NoticesPage: React.FC = () => {
 
           {/* Notice Details */}
           {selectedNoticeData && (
-            <Grid item xs={12} md={7}>
-              <Card>
+            <Grid size={{ xs: 12, md: 7 }}>
+              <Card
+                elevation={0}
+                sx={{
+                  borderRadius: 2,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                }}
+              >
                 <CardContent sx={{ p: 4 }}>
                   <Box display="flex" justifyContent="space-between" alignItems="start" mb={2}>
                     <Typography variant="h5" fontWeight="bold">
@@ -257,7 +375,11 @@ const NoticesPage: React.FC = () => {
                     </Typography>
                     <Chip
                       label={selectedNoticeData.target || 'All'}
-                      color="primary"
+                      sx={{
+                        bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        fontWeight: 600,
+                      }}
                     />
                   </Box>
 

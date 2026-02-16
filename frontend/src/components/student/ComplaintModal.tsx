@@ -11,23 +11,27 @@ import {
   Alert,
   CircularProgress,
 } from '@mui/material';
-import { complainApi } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
+import { useCreateComplaint } from '../../services/studentApi';
 
 interface ComplaintModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-// Default school ID
-const DEFAULT_SCHOOL_ID = '60d5f484f8d2e63a4c8b4567';
-
 const ComplaintModal: React.FC<ComplaintModalProps> = ({ open, onClose }) => {
   const { user } = useAuth();
   const [complaint, setComplaint] = useState('');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  
+  const createComplaintMutation = useCreateComplaint();
+
+  // Get schoolId from localStorage
+  const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+  const schoolId = typeof currentUser.school === 'string' 
+    ? currentUser.school 
+    : currentUser.school?._id;
 
   const handleSubmit = async () => {
     if (!complaint.trim()) {
@@ -40,35 +44,37 @@ const ComplaintModal: React.FC<ComplaintModalProps> = ({ open, onClose }) => {
       return;
     }
 
-    setLoading(true);
+    if (!schoolId) {
+      setError('School information not found');
+      return;
+    }
+
     setError('');
 
     try {
-      await complainApi.create({
+      await createComplaintMutation.mutateAsync({
         user: user.id,
         date: new Date().toISOString().split('T')[0],
         complaint: complaint.trim(),
-        school: DEFAULT_SCHOOL_ID,
+        school: schoolId,
       });
 
       setSuccess(true);
       setComplaint('');
       
-      // Close modal after 2 seconds
+      // Close modal after 1.5 seconds
       setTimeout(() => {
         setSuccess(false);
         onClose();
-      }, 2000);
+      }, 1500);
     } catch (err: any) {
       console.error('Complaint submission error:', err);
       setError(err.response?.data?.message || 'Failed to submit complaint. Please try again.');
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleClose = () => {
-    if (!loading) {
+    if (!createComplaintMutation.isPending) {
       setComplaint('');
       setError('');
       setSuccess(false);
@@ -112,7 +118,7 @@ const ComplaintModal: React.FC<ComplaintModalProps> = ({ open, onClose }) => {
               setComplaint(e.target.value);
               setError('');
             }}
-            disabled={loading || success}
+            disabled={createComplaintMutation.isPending || success}
             required
             helperText={`${complaint.length} characters`}
           />
@@ -122,7 +128,7 @@ const ComplaintModal: React.FC<ComplaintModalProps> = ({ open, onClose }) => {
       <DialogActions sx={{ p: 2.5, pt: 0 }}>
         <Button 
           onClick={handleClose} 
-          disabled={loading || success}
+          disabled={createComplaintMutation.isPending || success}
           color="inherit"
         >
           Cancel
@@ -131,9 +137,9 @@ const ComplaintModal: React.FC<ComplaintModalProps> = ({ open, onClose }) => {
           onClick={handleSubmit}
           variant="contained"
           color="error"
-          disabled={loading || success || !complaint.trim()}
+          disabled={createComplaintMutation.isPending || success || !complaint.trim()}
         >
-          {loading ? <CircularProgress size={24} /> : 'Submit Complaint'}
+          {createComplaintMutation.isPending ? <CircularProgress size={24} /> : 'Submit Complaint'}
         </Button>
       </DialogActions>
     </Dialog>

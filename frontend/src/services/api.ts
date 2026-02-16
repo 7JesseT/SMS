@@ -80,6 +80,8 @@ export const complainApi = {
     complaint: string;
     school: string;
   }) => api.post('/ComplainCreate', data),
+  
+  getByStudent: (studentId: string) => api.get(`/ComplainListByStudent/${studentId}`),
 };
 
 // Academic Calendar

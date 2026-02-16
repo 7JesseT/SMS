@@ -6,7 +6,7 @@ const { upload } = require('../config/cloudinary.js');
 const { adminRegister, adminLogIn, getAdminDetail } = require('../controllers/admin-controller.js');
 const { getCurrentUser, logout } = require('../controllers/auth-controller.js');
 const { sclassCreate, sclassList, deleteSclass, deleteSclasses, getSclassDetail, getSclassStudents } = require('../controllers/class-controller.js');
-const { complainCreate, complainList } = require('../controllers/complain-controller.js');
+const { complainCreate, complainList, complainListByStudent } = require('../controllers/complain-controller.js');
 const { noticeCreate, noticeList, deleteNotices, deleteNotice, updateNotice } = require('../controllers/notice-controller.js');
 const {
     studentRegister,
@@ -82,6 +82,7 @@ router.put("/Notice/:id", authenticate, authorize('Admin'), updateNotice);
 // Complain
 router.post('/ComplainCreate', authenticate, authorize('Student'), complainCreate);
 router.get('/ComplainList/:id', authenticate, complainList);
+router.get('/ComplainListByStudent/:id', authenticate, authorize('Student'), complainListByStudent);
 
 // Sclass
 router.post('/SclassCreate', authenticate, authorize('Admin'), sclassCreate);

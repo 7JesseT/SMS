@@ -7,6 +7,19 @@ import type {
   PrayerSchedule,
 } from '../types/entities.types';
 
+export interface Complaint {
+  _id: string;
+  user: {
+    _id: string;
+    name: string;
+  };
+  complaint: string;
+  date: string;
+  school: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 // API Response types
 export interface StudentDetailsResponse {
   _id: string;
@@ -67,7 +80,7 @@ export const studentApi = {
     if (data.guardianName) formData.append('guardianName', data.guardianName);
     if (data.photo) formData.append('photo', data.photo);
 
-    return api.put<StudentDetailsResponse>(`/Student/${id}`, formData, {
+    return api.put<StudentDetailsResponse>(`/StudentProfile/${id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -85,6 +98,18 @@ export const studentApi = {
   // Get prayer schedule
   getPrayerSchedule: (schoolId: string) =>
     api.get<PrayerSchedule[]>(`/Prayers/${schoolId}`),
+
+  // Get student complaints
+  getComplaints: (studentId: string) =>
+    api.get<Complaint[]>(`/ComplainListByStudent/${studentId}`),
+
+  // Create complaint
+  createComplaint: (data: {
+    user: string;
+    date: string;
+    complaint: string;
+    school: string;
+  }) => api.post('/ComplainCreate', data),
 };
 
 // TanStack Query Hooks
@@ -171,5 +196,41 @@ export const usePrayerSchedule = (schoolId: string | undefined) => {
     },
     enabled: !!schoolId,
     staleTime: 24 * 60 * 60 * 1000, // 24 hours
+  });
+};
+
+/**
+ * Hook to fetch student complaints
+ */
+export const useStudentComplaints = (studentId: string | undefined) => {
+  return useQuery({
+    queryKey: ['complaints', 'student', studentId],
+    queryFn: async () => {
+      if (!studentId) throw new Error('Student ID is required');
+      const response = await studentApi.getComplaints(studentId);
+      return response.data;
+    },
+    enabled: !!studentId,
+    staleTime: 2 * 60 * 1000, // 2 minutes
+  });
+};
+
+/**
+ * Hook to create a complaint
+ */
+export const useCreateComplaint = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: {
+      user: string;
+      date: string;
+      complaint: string;
+      school: string;
+    }) => studentApi.createComplaint(data),
+    onSuccess: (_response, variables) => {
+      // Invalidate complaints query to refetch the list
+      queryClient.invalidateQueries({ queryKey: ['complaints', 'student', variables.user] });
+    },
   });
 };

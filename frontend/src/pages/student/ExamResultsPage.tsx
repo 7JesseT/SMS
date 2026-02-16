@@ -16,11 +16,18 @@ import {
   TableRow,
   Paper,
   Chip,
+  useTheme,
+  useMediaQuery,
+  Stack,
+  Divider,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import {
   ArrowBack as ArrowBackIcon,
   Logout as LogoutIcon,
   Assessment as AssessmentIcon,
+  EmojiEvents as TrophyIcon,
+  TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
 import { useStudentDetails } from '../../services/studentApi';
 import { useAuth } from '../../context/AuthContext';
@@ -30,6 +37,9 @@ import { format } from 'date-fns';
 const ExamResultsPage: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: student, isLoading, error } = useStudentDetails(user?.id);
 
   const handleLogout = () => {
@@ -60,12 +70,21 @@ const ExamResultsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
-        <Container maxWidth="lg">
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-            <CircularProgress />
-          </Box>
-        </Container>
+      <Box 
+        sx={{ 
+          minHeight: '100vh', 
+          bgcolor: 'background.default',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Stack spacing={2} alignItems="center">
+          <CircularProgress size={60} thickness={4} />
+          <Typography variant="body1" color="text.secondary">
+            Loading exam results...
+          </Typography>
+        </Stack>
       </Box>
     );
   }
@@ -92,93 +111,150 @@ const ExamResultsPage: React.FC = () => {
   const overallGrade = getGrade(overallPercentage);
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
-      <Container maxWidth="lg">
-        {/* Header */}
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Button
-            variant="outlined"
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate('/student/profile')}
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 4 }}>
+      {/* Header Section with Gradient Background */}
+      <Box
+        sx={{
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          pt: 3,
+          pb: 8,
+          mb: -4,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Stack
+            direction={isSmallScreen ? 'column' : 'row'}
+            justifyContent="space-between"
+            alignItems={isSmallScreen ? 'stretch' : 'center'}
+            spacing={2}
+            mb={3}
           >
-            Back to Profile
-          </Button>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<LogoutIcon />}
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
-        </Box>
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate('/student/profile')}
+              sx={{
+                color: 'white',
+                borderColor: 'rgba(255,255,255,0.3)',
+                '&:hover': {
+                  borderColor: 'white',
+                  bgcolor: 'rgba(255,255,255,0.1)',
+                },
+              }}
+            >
+              Back to Profile
+            </Button>
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<LogoutIcon />}
+              onClick={handleLogout}
+              sx={{
+                color: 'white',
+                borderColor: 'rgba(255,255,255,0.3)',
+                '&:hover': {
+                  borderColor: 'rgba(244,67,54,0.8)',
+                  bgcolor: 'rgba(244,67,54,0.1)',
+                },
+              }}
+            >
+              Logout
+            </Button>
+          </Stack>
 
-        <Box display="flex" alignItems="center" gap={2} mb={3}>
-          <AssessmentIcon sx={{ fontSize: 40, color: 'primary.main' }} />
-          <Typography variant="h4" fontWeight="bold">
-            Exam Results
-          </Typography>
-        </Box>
+          <Stack direction="row" alignItems="center" spacing={1.5}>
+            <AssessmentIcon sx={{ color: 'white', fontSize: isMobile ? 28 : 32 }} />
+            <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold" color="white">
+              Exam Results
+            </Typography>
+          </Stack>
+        </Container>
+      </Box>
+
+      <Container maxWidth="lg">
 
         {/* Overall Statistics */}
         {totalExams > 0 && (
-          <Card sx={{ mb: 3 }}>
+          <Card
+            elevation={0}
+            sx={{
+              mb: 3,
+              borderRadius: 2,
+              border: '1px solid',
+              borderColor: 'divider',
+            }}
+          >
             <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" fontWeight="bold" gutterBottom>
+              <Typography variant="h6" fontWeight="bold" gutterBottom mb={3}>
                 Overall Performance
               </Typography>
-              <Box display="flex" gap={4} flexWrap="wrap" mt={2}>
-                <Box>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Total Exams
-                  </Typography>
-                  <Typography variant="h5" fontWeight="bold" color="primary.main">
-                    {totalExams}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Total Marks
-                  </Typography>
-                  <Typography variant="h5" fontWeight="bold">
-                    {totalMarks} / {totalPossibleMarks}
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Overall Percentage
-                  </Typography>
-                  <Typography variant="h5" fontWeight="bold" color="success.main">
-                    {overallPercentage.toFixed(2)}%
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Overall Grade
-                  </Typography>
-                  <Chip
-                    label={overallGrade}
-                    color={getGradeColor(overallGrade)}
-                    size="medium"
-                    sx={{ fontSize: '1.2rem', fontWeight: 'bold', px: 2, py: 2.5 }}
-                  />
-                </Box>
-              </Box>
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" fontWeight={500} gutterBottom>
+                      Total Exams
+                    </Typography>
+                    <Typography variant="h4" fontWeight="bold" color="primary.main">
+                      {totalExams}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" fontWeight={500} gutterBottom>
+                      Total Marks
+                    </Typography>
+                    <Typography variant="h4" fontWeight="bold">
+                      {totalMarks} / {totalPossibleMarks}
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" fontWeight={500} gutterBottom>
+                      Overall Percentage
+                    </Typography>
+                    <Typography variant="h4" fontWeight="bold" color="success.main">
+                      {overallPercentage.toFixed(2)}%
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                  <Box>
+                    <Typography variant="body2" color="text.secondary" fontWeight={500} gutterBottom>
+                      Overall Grade
+                    </Typography>
+                    <Chip
+                      label={overallGrade}
+                      color={getGradeColor(overallGrade)}
+                      sx={{ fontSize: '1.2rem', fontWeight: 'bold', px: 1, py: 0.8, height: 'auto' }}
+                    />
+                  </Box>
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
         )}
 
         {/* Exam Results Table */}
-        <Card>
+        <Card
+          elevation={0}
+          sx={{
+            borderRadius: 2,
+            border: '1px solid',
+            borderColor: 'divider',
+          }}
+        >
           <CardContent sx={{ p: 0 }}>
             {examResults.length === 0 ? (
               <Box p={4} textAlign="center">
+                <AssessmentIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
                 <Typography variant="h6" color="text.secondary">
                   No exam results available yet
                 </Typography>
               </Box>
             ) : (
-              <TableContainer component={Paper} elevation={0}>
+              <TableContainer>
                 <Table>
                   <TableHead>
                     <TableRow>
@@ -202,7 +278,7 @@ const ExamResultsPage: React.FC = () => {
                       return (
                         <TableRow key={result._id || index} hover>
                           <TableCell>
-                            <Typography variant="body2" fontWeight="medium">
+                            <Typography variant="body2" fontWeight={600}>
                               {result.subName?.subName || 'N/A'}
                             </Typography>
                           </TableCell>
@@ -222,7 +298,7 @@ const ExamResultsPage: React.FC = () => {
                             </Typography>
                           </TableCell>
                           <TableCell align="center">
-                            <Typography variant="body2" fontWeight="medium">
+                            <Typography variant="body2" fontWeight={600}>
                               {percentage.toFixed(2)}%
                             </Typography>
                           </TableCell>

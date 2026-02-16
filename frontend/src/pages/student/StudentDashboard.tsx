@@ -7,7 +7,12 @@ import {
   Button,
   Avatar,
   Container,
+  useTheme,
+  useMediaQuery,
+  Stack,
+  Paper,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import {
   ReportProblem as ComplaintIcon,
   Person as PersonIcon,
@@ -17,6 +22,9 @@ import {
   CalendarMonth as CalendarIcon,
   Mosque as PrayerIcon,
   Assessment as GradesIcon,
+  School as SchoolIcon,
+  Book as SubjectsIcon,
+  EventNote as AttendanceIcon,
 } from '@mui/icons-material';
 import ComplaintModal from '../../components/student/ComplaintModal';
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +34,9 @@ import { useStudentNotices, useAcademicCalendar, usePrayerSchedule } from '../..
 const StudentDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [openComplaintModal, setOpenComplaintModal] = useState(false);
 
   // Get schoolId from localStorage
@@ -44,363 +55,229 @@ const StudentDashboard: React.FC = () => {
     navigate('/');
   };
 
+  // Quick Action Card Component
+  const QuickActionCard = ({ 
+    icon, 
+    title, 
+    description, 
+    buttonText, 
+    onClick, 
+    color = 'primary' 
+  }: any) => (
+    <Paper
+      elevation={0}
+      sx={{
+        height: '100%',
+        borderRadius: 3,
+        border: '1px solid',
+        borderColor: 'divider',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        '&:hover': {
+          borderColor: `${color}.main`,
+          boxShadow: theme.shadows[8],
+          transform: 'translateY(-4px)',
+        },
+      }}
+      onClick={onClick}
+    >
+      <CardContent
+        sx={{
+          height: '100%',
+          minHeight: 260,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          p: 3,
+          textAlign: 'center',
+        }}
+      >
+        <Box
+          sx={{
+            p: 2.5,
+            borderRadius: 3,
+            bgcolor: `${color}.lighter`,
+            color: `${color}.main`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            mb: 2.5,
+          }}
+        >
+          {icon}
+        </Box>
+        <Typography variant="h6" fontWeight="bold" gutterBottom>
+          {title}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" mb={3}>
+          {description}
+        </Typography>
+        <Button
+          variant="contained"
+          color={color}
+          endIcon={<ArrowForwardIcon />}
+          sx={{
+            px: 3,
+            py: 1,
+            fontWeight: 600,
+            borderRadius: 2,
+            boxShadow: theme.shadows[4],
+            '&:hover': {
+              boxShadow: theme.shadows[8],
+              transform: 'translateY(-2px)',
+            },
+          }}
+        >
+          {buttonText}
+        </Button>
+      </CardContent>
+    </Paper>
+  );
+
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
-      <Container maxWidth="lg">
-        {/* Logout Button */}
-        <Box display="flex" justifyContent="flex-end" mb={2}>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<LogoutIcon />}
-            onClick={handleLogout}
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 4 }}>
+      {/* Header Section with Gradient Background */}
+      <Box
+        sx={{
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          pt: 3,
+          pb: 8,
+          mb: -4,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Stack
+            direction={isSmallScreen ? 'column' : 'row'}
+            justifyContent="space-between"
+            alignItems={isSmallScreen ? 'stretch' : 'center'}
+            spacing={2}
           >
-            Logout
-          </Button>
-        </Box>
-
-        {/* Welcome Section */}
-        <Box mb={4}>
-          <Typography variant="h4" fontWeight="bold" gutterBottom>
-            Welcome back, {user?.name || 'Student'}!
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            What would you like to do today?
-          </Typography>
-        </Box>
-
-        {/* Main Action Cards */}
-        <Box display="flex" gap={3} flexWrap="wrap">
-        {/* Create Complaint Card */}
-        <Box flex="1" minWidth="300px">
-          <Card
-            elevation={3}
-            sx={{
-              height: '100%',
-              minHeight: 280,
-              transition: 'all 0.3s',
-              cursor: 'pointer',
-              '&:hover': {
-                transform: 'translateY(-8px)',
-                boxShadow: 6,
-              },
-            }}
-            onClick={() => setOpenComplaintModal(true)}
-          >
-            <CardContent
+            <Box>
+              <Typography 
+                variant={isMobile ? 'h5' : 'h4'} 
+                fontWeight="bold" 
+                color="white"
+                gutterBottom
+              >
+                Welcome back, {user?.name || 'Student'}!
+              </Typography>
+              <Typography variant="body1" sx={{ color: 'rgba(255,255,255,0.9)' }}>
+                What would you like to do today?
+              </Typography>
+            </Box>
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<LogoutIcon />}
+              onClick={handleLogout}
               sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                p: 4,
-                textAlign: 'center',
+                color: 'white',
+                borderColor: 'rgba(255,255,255,0.3)',
+                '&:hover': {
+                  borderColor: 'rgba(244,67,54,0.8)',
+                  bgcolor: 'rgba(244,67,54,0.1)',
+                },
               }}
             >
-              <Avatar
-                sx={{
-                  width: 80,
-                  height: 80,
-                  bgcolor: 'error.main',
-                  mb: 3,
-                }}
-              >
-                <ComplaintIcon sx={{ fontSize: 40 }} />
-              </Avatar>
-              <Typography variant="h5" fontWeight="bold" gutterBottom>
-                Create Complaint
-              </Typography>
-              <Typography variant="body1" color="text.secondary" mb={3}>
-                Submit a formal complaint or report an issue
-              </Typography>
-              <Button
-                variant="contained"
-                color="error"
-                endIcon={<ArrowForwardIcon />}
-                size="large"
-              >
-                Submit Complaint
-              </Button>
-            </CardContent>
-          </Card>
-        </Box>
-
-        {/* Student Profile Card */}
-        <Box flex="1" minWidth="300px">
-          <Card
-            elevation={3}
-            sx={{
-              height: '100%',
-              minHeight: 280,
-              transition: 'all 0.3s',
-              cursor: 'pointer',
-              '&:hover': {
-                transform: 'translateY(-8px)',
-                boxShadow: 6,
-              },
-            }}
-            onClick={() => navigate('/student/profile')}
-          >
-            <CardContent
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                p: 4,
-                textAlign: 'center',
-              }}
-            >
-              <Avatar
-                sx={{
-                  width: 80,
-                  height: 80,
-                  bgcolor: 'primary.main',
-                  mb: 3,
-                }}
-              >
-                <PersonIcon sx={{ fontSize: 40 }} />
-              </Avatar>
-              <Typography variant="h5" fontWeight="bold" gutterBottom>
-                My Profile
-              </Typography>
-              <Typography variant="body1" color="text.secondary" mb={3}>
-                View and edit your personal information
-              </Typography>
-                <Button
-                variant="contained"
-                color="success"
-                endIcon={<ArrowForwardIcon />}
-                size="large"
-              >
-                View Profile
-              </Button>
-            </CardContent>
-          </Card>
-        </Box>
-
-        {/* Notices Card */}
-        <Box flex="1" minWidth="300px">
-          <Card
-            elevation={3}
-            sx={{
-              height: '100%',
-              minHeight: 280,
-              transition: 'all 0.3s',
-              cursor: 'pointer',
-              '&:hover': {
-                transform: 'translateY(-8px)',
-                boxShadow: 6,
-              },
-            }}
-            onClick={() => navigate('/student/notices')}
-          >
-            <CardContent
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                p: 4,
-                textAlign: 'center',
-              }}
-            >
-              <Avatar
-                sx={{
-                  width: 80,
-                  height: 80,
-                  bgcolor: 'info.main',
-                  mb: 3,
-                }}
-              >
-                <NoticesIcon sx={{ fontSize: 40 }} />
-              </Avatar>
-              <Typography variant="h5" fontWeight="bold" gutterBottom>
-                Notices
-              </Typography>
-              <Typography variant="body1" color="text.secondary" mb={3}>
-                View daily announcements and notices
-              </Typography>
-              <Button
-                variant="contained"
-                color="info"
-                endIcon={<ArrowForwardIcon />}
-                size="large"
-              >
-                View Notices
-              </Button>
-            </CardContent>
-          </Card>
-        </Box>
-
-        {/* Exam Results Card */}
-        <Box flex="1" minWidth="300px">
-          <Card
-            elevation={3}
-            sx={{
-              height: '100%',
-              minHeight: 280,
-              transition: 'all 0.3s',
-              cursor: 'pointer',
-              '&:hover': {
-                transform: 'translateY(-8px)',
-                boxShadow: 6,
-              },
-            }}
-            onClick={() => navigate('/student/exam-results')}
-          >
-            <CardContent
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                p: 4,
-                textAlign: 'center',
-              }}
-            >
-              <Avatar
-                sx={{
-                  width: 80,
-                  height: 80,
-                  bgcolor: 'success.main',
-                  mb: 3,
-                }}
-              >
-                <GradesIcon sx={{ fontSize: 40 }} />
-              </Avatar>
-              <Typography variant="h5" fontWeight="bold" gutterBottom>
-                Exam Results
-              </Typography>
-              <Typography variant="body1" color="text.secondary" mb={3}>
-                View your academic performance
-              </Typography>
-              <Button
-                variant="contained"
-                color="success"
-                endIcon={<ArrowForwardIcon />}
-                size="large"
-              >
-                View Results
-              </Button>
-            </CardContent>
-          </Card>
-        </Box>
-
-        {/* Academic Calendar Card */}
-        <Box flex="1" minWidth="300px">
-          <Card
-            elevation={3}
-            sx={{
-              height: '100%',
-              minHeight: 280,
-              transition: 'all 0.3s',
-              cursor: 'pointer',
-              '&:hover': {
-                transform: 'translateY(-8px)',
-                boxShadow: 6,
-              },
-            }}
-            onClick={() => navigate('/student/calendar')}
-          >
-            <CardContent
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                p: 4,
-                textAlign: 'center',
-              }}
-            >
-              <Avatar
-                sx={{
-                  width: 80,
-                  height: 80,
-                  bgcolor: 'warning.main',
-                  mb: 3,
-                }}
-              >
-                <CalendarIcon sx={{ fontSize: 40 }} />
-              </Avatar>
-              <Typography variant="h5" fontWeight="bold" gutterBottom>
-                Academic Calendar
-              </Typography>
-              <Typography variant="body1" color="text.secondary" mb={3}>
-                View school events and important dates
-              </Typography>
-                     <Button
-                variant="contained"
-                color="success"
-                endIcon={<ArrowForwardIcon />}
-                size="large"
-              >
-                View Calendar
-              </Button>
-            </CardContent>
-          </Card>
-        </Box>
-
-        {/* Prayer Schedule Card */}
-        <Box flex="1" minWidth="300px">
-          <Card
-            elevation={3}
-            sx={{
-              height: '100%',
-              minHeight: 280,
-              transition: 'all 0.3s',
-              cursor: 'pointer',
-              '&:hover': {
-                transform: 'translateY(-8px)',
-                boxShadow: 6,
-              },
-            }}
-            onClick={() => navigate('/student/prayers')}
-          >
-            <CardContent
-              sx={{
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                p: 4,
-                textAlign: 'center',
-              }}
-            >
-              <Avatar
-                sx={{
-                  width: 80,
-                  height: 80,
-                  bgcolor: 'secondary.main',
-                  mb: 3,
-                }}
-              >
-                <PrayerIcon sx={{ fontSize: 60, color: 'gold' }} />
-              </Avatar>
-              <Typography variant="h5" fontWeight="bold" gutterBottom>
-                Prayer Schedule
-              </Typography>
-              <Typography variant="body1" color="text.secondary" mb={3}>
-                View daily prayer times
-              </Typography>
-                     <Button
-                variant="contained"
-                color="success"
-                endIcon={<ArrowForwardIcon />}
-                size="large"
-              >
-                View Schedule
-              </Button>
-            </CardContent>
-          </Card>
-        </Box>
+              Logout
+            </Button>
+          </Stack>
+        </Container>
       </Box>
+
+      <Container maxWidth="lg">
+
+        {/* Quick Actions Grid */}
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <QuickActionCard
+              icon={<PersonIcon sx={{ fontSize: 40 }} />}
+              title="My Profile"
+              description="View and edit your personal information"
+              buttonText="View Profile"
+              onClick={() => navigate('/student/profile')}
+              color="primary"
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <QuickActionCard
+              icon={<GradesIcon sx={{ fontSize: 40 }} />}
+              title="Exam Results"
+              description="View your academic performance and grades"
+              buttonText="View Results"
+              onClick={() => navigate('/student/exam-results')}
+              color="success"
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <QuickActionCard
+              icon={<SubjectsIcon sx={{ fontSize: 40 }} />}
+              title="My Subjects"
+              description="View your enrolled subjects and details"
+              buttonText="View Subjects"
+              onClick={() => navigate('/student/subjects')}
+              color="info"
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <QuickActionCard
+              icon={<AttendanceIcon sx={{ fontSize: 40 }} />}
+              title="Attendance"
+              description="Track your class attendance records"
+              buttonText="View Attendance"
+              onClick={() => navigate('/student/attendance')}
+              color="warning"
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <QuickActionCard
+              icon={<NoticesIcon sx={{ fontSize: 40 }} />}
+              title="Notices"
+              description="View daily announcements and notices"
+              buttonText="View Notices"
+              onClick={() => navigate('/student/notices')}
+              color="info"
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <QuickActionCard
+              icon={<ComplaintIcon sx={{ fontSize: 40 }} />}
+              title="Complaints"
+              description="Submit and track your complaints"
+              buttonText="View Complaints"
+              onClick={() => navigate('/student/complaints')}
+              color="error"
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <QuickActionCard
+              icon={<CalendarIcon sx={{ fontSize: 40 }} />}
+              title="Academic Calendar"
+              description="View school events and important dates"
+              buttonText="View Calendar"
+              onClick={() => navigate('/student/calendar')}
+              color="warning"
+            />
+          </Grid>
+
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <QuickActionCard
+              icon={<PrayerIcon sx={{ fontSize: 40 }} />}
+              title="Prayer Schedule"
+              description="View daily prayer times"
+              buttonText="View Schedule"
+              onClick={() => navigate('/student/prayers')}
+              color="success"
+            />
+          </Grid>
+        </Grid>
 
       {/* Complaint Modal */}
       <ComplaintModal 
