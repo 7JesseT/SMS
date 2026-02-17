@@ -17,7 +17,7 @@ const createCalendarEvent = async (req, res) => {
         const result = await event.save();
         res.status(201).json(result);
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: error.message });
     }
 };
 
@@ -28,7 +28,7 @@ const getCalendarEvents = async (req, res) => {
             .sort({ startDate: 1 });
         res.json(events);
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: error.message });
     }
 };
 
@@ -47,7 +47,7 @@ const updateCalendarEvent = async (req, res) => {
 
         res.json(event);
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: error.message });
     }
 };
 
@@ -62,7 +62,7 @@ const deleteCalendarEvent = async (req, res) => {
 
         res.json({ message: 'Event deleted successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: error.message });
     }
 };
 

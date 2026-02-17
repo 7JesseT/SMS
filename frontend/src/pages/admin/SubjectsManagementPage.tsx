@@ -8,12 +8,6 @@ import {
   Alert,
   CircularProgress,
   Container,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Paper,
   IconButton,
   Dialog,
@@ -22,12 +16,24 @@ import {
   DialogActions,
   TextField,
   MenuItem,
+  useTheme,
+  useMediaQuery,
+  Stack,
+  List,
+  ListItem,
+  Divider,
+  Snackbar,
+  Chip,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import {
   ArrowBack as ArrowBackIcon,
   Logout as LogoutIcon,
   Add as AddIcon,
   Delete as DeleteIcon,
+  Subject as SubjectIcon,
+  School as SchoolIcon,
+  Code as CodeIcon,
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../services/adminApi';
@@ -37,6 +43,10 @@ import { useAuth } from '../../context/AuthContext';
 const SubjectsManagementPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  
   const [subjects, setSubjects] = useState<SubjectData[]>([]);
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -149,69 +159,311 @@ const SubjectsManagementPage: React.FC = () => {
     navigate('/');
   };
 
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
+        <CircularProgress />
+        <Typography ml={2}>Loading subjects...</Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: 4 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50' }}>
+      {/* Header with Gradient */}
+      <Box
+        sx={{
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+          color: 'white',
+          py: 6,
+          mb: 4,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
+            <Button
+              startIcon={<ArrowBackIcon />}
+              onClick={() => navigate('/admin/dashboard')}
+              sx={{
+                color: 'white',
+                '&:hover': {
+                  bgcolor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+            >
+              Dashboard
+            </Button>
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => setOpenCreateDialog(true)}
+                sx={{
+                  bgcolor: 'white',
+                  color: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
+              >
+                Add Subject
+              </Button>
+              <Button
+                startIcon={<LogoutIcon />}
+                onClick={handleLogout}
+                sx={{
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: 'rgba(255, 255, 255, 0.1)',
+                  },
+                }}
+              >
+                Logout
+              </Button>
+            </Stack>
+          </Stack>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <SubjectIcon sx={{ fontSize: 40 }} />
+            <Typography variant={isMobile ? 'h5' : 'h4'} fontWeight="bold" color="white">
+              Subjects Management
+            </Typography>
+          </Stack>
+        </Container>
+      </Box>
+
       <Container maxWidth="lg">
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Button variant="outlined" startIcon={<ArrowBackIcon />} onClick={() => navigate('/admin/dashboard')}>
-            Back to Dashboard
-          </Button>
-          <Button variant="outlined" color="error" startIcon={<LogoutIcon />} onClick={handleLogout}>
-            Logout
-          </Button>
-        </Box>
+        {/* Stats Cards */}
+        <Grid container spacing={3} mb={4}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 3,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                textAlign: 'center',
+              }}
+            >
+              <Box
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: 'primary.lighter',
+                  color: 'primary.main',
+                  display: 'inline-flex',
+                  mb: 2,
+                }}
+              >
+                <SubjectIcon sx={{ fontSize: 32 }} />
+              </Box>
+              <Typography variant="h4" fontWeight="bold" color="primary.main">
+                {subjects.length}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Total Subjects
+              </Typography>
+            </Paper>
+          </Grid>
 
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Typography variant="h4" fontWeight="bold">Subjects Management</Typography>
-          <Button variant="contained" color="success" startIcon={<AddIcon />} onClick={() => setOpenCreateDialog(true)}>
-            Create Subject
-          </Button>
-        </Box>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 3,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                textAlign: 'center',
+              }}
+            >
+              <Box
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: 'success.lighter',
+                  color: 'success.main',
+                  display: 'inline-flex',
+                  mb: 2,
+                }}
+              >
+                <SchoolIcon sx={{ fontSize: 32 }} />
+              </Box>
+              <Typography variant="h4" fontWeight="bold" color="success.main">
+                {classes.length}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Available Classes
+              </Typography>
+            </Paper>
+          </Grid>
 
-        {success && <Alert severity="success" sx={{ mb: 3 }}>{success}</Alert>}
-        {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <Paper
+              elevation={0}
+              sx={{
+                p: 3,
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                textAlign: 'center',
+              }}
+            >
+              <Box
+                sx={{
+                  p: 2,
+                  borderRadius: 2,
+                  bgcolor: 'info.lighter',
+                  color: 'info.main',
+                  display: 'inline-flex',
+                  mb: 2,
+                }}
+              >
+                <AddIcon sx={{ fontSize: 32 }} />
+              </Box>
+              <Typography variant="h4" fontWeight="bold" color="info.main">
+                +
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Add New Subject
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
 
-        {loading ? (
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-            <CircularProgress />
-          </Box>
-        ) : subjects.length === 0 ? (
-          <Card>
-            <CardContent sx={{ textAlign: 'center', py: 8 }}>
-              <Typography variant="h6" color="text.secondary">No subjects found</Typography>
-              <Typography variant="body2" color="text.secondary" mt={1}>Create your first subject to get started</Typography>
-            </CardContent>
-          </Card>
-        ) : (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell><strong>Subject Name</strong></TableCell>
-                  <TableCell><strong>Code</strong></TableCell>
-                  <TableCell><strong>Sessions</strong></TableCell>
-                  <TableCell><strong>Created At</strong></TableCell>
-                  <TableCell align="right"><strong>Actions</strong></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {subjects.map((subject) => (
-                  <TableRow key={subject._id}>
-                    <TableCell>{subject.subName}</TableCell>
-                    <TableCell>{subject.subCode}</TableCell>
-                    <TableCell>{subject.sessions}</TableCell>
-                    <TableCell>{new Date(subject.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell align="right">
-                      <IconButton color="error" onClick={() => handleOpenDeleteDialog(subject._id)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
+        {/* Subjects List Card */}
+        <Card
+          elevation={0}
+          sx={{
+            borderRadius: 2,
+            border: '1px solid',
+            borderColor: 'divider',
+            mb: 3,
+          }}
+        >
+          <CardContent sx={{ p: 0 }}>
+            {subjects.length === 0 ? (
+              <Box p={8} textAlign="center">
+                <SubjectIcon sx={{ fontSize: 64, color: 'text.disabled', mb: 2 }} />
+                <Typography variant="h6" color="text.secondary" gutterBottom>
+                  No subjects found
+                </Typography>
+                <Typography variant="body2" color="text.secondary" mb={2}>
+                  Create your first subject to get started
+                </Typography>
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={() => setOpenCreateDialog(true)}
+                >
+                  Add First Subject
+                </Button>
+              </Box>
+            ) : (
+              <List sx={{ p: 0 }}>
+                {subjects.map((subject, index) => (
+                  <React.Fragment key={subject._id}>
+                    <ListItem
+                      sx={{
+                        py: 3,
+                        px: 3,
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          bgcolor: 'action.hover',
+                        },
+                      }}
+                    >
+                      <Box
+                        display="flex"
+                        alignItems="center"
+                        gap={3}
+                        width="100%"
+                        flexDirection={isSmallScreen ? 'column' : 'row'}
+                      >
+                        <Box
+                          sx={{
+                            p: 2,
+                            borderRadius: 2,
+                            bgcolor: 'primary.lighter',
+                            color: 'primary.main',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                          }}
+                        >
+                          <SubjectIcon sx={{ fontSize: 32 }} />
+                        </Box>
+
+                        <Box flex={1} textAlign={isSmallScreen ? 'center' : 'left'}>
+                          <Typography variant="h6" fontWeight="bold" gutterBottom>
+                            {subject.subName}
+                          </Typography>
+                          <Stack
+                            direction={isSmallScreen ? 'column' : 'row'}
+                            spacing={2}
+                            alignItems={isSmallScreen ? 'center' : 'flex-start'}
+                          >
+                            <Chip
+                              icon={<CodeIcon />}
+                              label={`Code: ${subject.subCode}`}
+                              size="small"
+                              color="primary"
+                              variant="outlined"
+                            />
+                            <Chip
+                              label={`${subject.sessions} Sessions`}
+                              size="small"
+                              color="info"
+                              variant="outlined"
+                            />
+                            <Typography variant="caption" color="text.secondary">
+                              Created {new Date(subject.createdAt).toLocaleDateString()}
+                            </Typography>
+                          </Stack>
+                        </Box>
+
+                        <IconButton
+                          color="error"
+                          onClick={() => handleOpenDeleteDialog(subject._id)}
+                          title="Delete subject"
+                          sx={{
+                            bgcolor: 'error.lighter',
+                            '&:hover': {
+                              bgcolor: 'error.light',
+                            },
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    </ListItem>
+                    {index < subjects.length - 1 && <Divider />}
+                  </React.Fragment>
                 ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        )}
+              </List>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Info Card */}
+        <Paper
+          elevation={0}
+          sx={{
+            p: 2.5,
+            bgcolor: 'info.lighter',
+            border: '1px solid',
+            borderColor: 'info.light',
+            borderRadius: 2,
+          }}
+        >
+          <Stack direction="row" spacing={1.5} alignItems="start">
+            <SchoolIcon sx={{ color: 'info.main', mt: 0.2 }} />
+            <Typography variant="body2" color="text.secondary" lineHeight={1.6}>
+              <strong style={{ color: theme.palette.info.dark }}>Note:</strong> Manage subjects for the school.
+              You can add or delete subjects. Students are enrolled in these subjects.
+            </Typography>
+          </Stack>
+        </Paper>
 
         <Dialog open={openCreateDialog} onClose={() => setOpenCreateDialog(false)} maxWidth="sm" fullWidth>
           <DialogTitle>Create New Subject</DialogTitle>
@@ -286,6 +538,29 @@ const SubjectsManagementPage: React.FC = () => {
             </Button>
           </DialogActions>
         </Dialog>
+
+        {/* Snackbar for success/error messages */}
+        <Snackbar
+          open={!!success || !!error}
+          autoHideDuration={4000}
+          onClose={() => {
+            setSuccess('');
+            setError('');
+          }}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert
+            onClose={() => {
+              setSuccess('');
+              setError('');
+            }}
+            severity={success ? 'success' : 'error'}
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {success || error}
+          </Alert>
+        </Snackbar>
       </Container>
     </Box>
   );

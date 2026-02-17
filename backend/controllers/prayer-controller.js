@@ -15,7 +15,7 @@ const createPrayerSchedule = async (req, res) => {
         const result = await prayer.save();
         res.status(201).json(result);
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: error.message });
     }
 };
 
@@ -26,7 +26,7 @@ const getPrayerSchedules = async (req, res) => {
             .sort({ time: 1 });
         res.json(prayers);
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: error.message });
     }
 };
 
@@ -45,7 +45,7 @@ const updatePrayerSchedule = async (req, res) => {
 
         res.json(prayer);
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: error.message });
     }
 };
 
@@ -60,7 +60,7 @@ const deletePrayerSchedule = async (req, res) => {
 
         res.json({ message: 'Prayer schedule deleted successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: error.message });
     }
 };
 

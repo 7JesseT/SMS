@@ -31,7 +31,7 @@ const studentRegister = async (req, res) => {
             res.status(201).json(result);
         }
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: err.message });
     }
 };
 
@@ -68,7 +68,7 @@ const studentLogIn = async (req, res) => {
         student.attendance = undefined;
         res.json({ user: student, role: 'Student' });
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: err.message });
     }
 };
 
@@ -291,7 +291,7 @@ const updateStudentProfile = async (req, res) => {
         student.password = undefined;
         res.json(student);
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: error.message });
     }
 };
 
@@ -333,7 +333,7 @@ const bulkUpdateExamResults = async (req, res) => {
         const results = await Promise.all(updates);
         res.json({ message: 'Exam results updated', results });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error: error.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: error.message });
     }
 };
 

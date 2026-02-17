@@ -31,6 +31,9 @@ import { MarksInputPage } from '../pages/teacher/MarksInputPage';
 import { StudentReportPage } from '../pages/teacher/StudentReportPage';
 import { TeacherAnnouncementsPage } from '../pages/teacher/TeacherAnnouncementsPage';
 import { TeacherCalendarPage } from '../pages/teacher/TeacherCalendarPage';
+import TeacherAcademicCalendarPage from '../pages/teacher/TeacherAcademicCalendarPage';
+import TeacherNoticesPage from '../pages/teacher/TeacherNoticesPage';
+import TeacherPrayerSchedulePage from '../pages/teacher/TeacherPrayerSchedulePage';
 
 // Student Pages
 import StudentDashboard from '../pages/student/StudentDashboard';
@@ -155,6 +158,9 @@ const AppRouter: React.FC = () => {
           <Route path="student-report" element={<StudentReportPage />} />
           <Route path="announcements" element={<TeacherAnnouncementsPage />} />
           <Route path="calendar" element={<TeacherCalendarPage />} />
+          <Route path="academic-calendar" element={<TeacherAcademicCalendarPage />} />
+          <Route path="notices" element={<TeacherNoticesPage />} />
+          <Route path="prayers" element={<TeacherPrayerSchedulePage />} />
         </Route>
 
         {/* Student Routes */}

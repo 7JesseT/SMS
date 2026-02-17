@@ -33,7 +33,7 @@ const adminRegister = async (req, res) => {
             res.status(201).json(result);
         }
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: err.message });
     }
 };
 
@@ -62,7 +62,7 @@ const adminLogIn = async (req, res) => {
         admin.password = undefined;
         res.json({ user: admin, role: 'Admin' });
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: err.message });
     }
 };
 

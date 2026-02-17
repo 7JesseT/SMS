@@ -41,7 +41,7 @@ const getCurrentUser = async (req, res) => {
 
         res.json({ user, role });
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: err.message });
     }
 };
 
@@ -58,7 +58,7 @@ const logout = async (req, res) => {
         });
         res.json({ message: 'Logged out successfully' });
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: 'Something went wrong! Please try again.', error: err.message });
     }
 };
 
