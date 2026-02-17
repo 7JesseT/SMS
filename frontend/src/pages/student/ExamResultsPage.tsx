@@ -14,20 +14,16 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Chip,
   useTheme,
   useMediaQuery,
   Stack,
-  Divider,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import {
   ArrowBack as ArrowBackIcon,
   Logout as LogoutIcon,
   Assessment as AssessmentIcon,
-  EmojiEvents as TrophyIcon,
-  TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
 import { useStudentDetails } from '../../services/studentApi';
 import { useAuth } from '../../context/AuthContext';

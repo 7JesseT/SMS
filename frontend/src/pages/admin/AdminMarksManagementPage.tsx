@@ -26,7 +26,6 @@ import {
   useMediaQuery,
   Stack,
   Card,
-  CardContent,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { 
@@ -36,7 +35,6 @@ import {
   ArrowBack as ArrowBackIcon,
   Logout as LogoutIcon,
   Assessment as MarksIcon,
-  School as SchoolIcon,
   Person as PersonIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
@@ -51,12 +49,11 @@ import type { Student, ExamResult } from '../../types/student.types';
 import { format } from 'date-fns';
 
 export const AdminMarksManagementPage: React.FC = () => {
-  const { user, getCurrentUserData, logout } = useAuth() as any;
+  const { getCurrentUserData, logout } = useAuth() as any;
   const currentUserData = getCurrentUserData();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   
   // For Admin users, the _id IS the school ID
   const schoolId = currentUserData?._id;

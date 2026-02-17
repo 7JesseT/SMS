@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import {
   Box,
   Typography,
-  Card,
   CardContent,
   Button,
-  Avatar,
   Container,
   useTheme,
   useMediaQuery,
@@ -22,7 +20,6 @@ import {
   CalendarMonth as CalendarIcon,
   Mosque as PrayerIcon,
   Assessment as GradesIcon,
-  School as SchoolIcon,
   Book as SubjectsIcon,
   EventNote as AttendanceIcon,
 } from '@mui/icons-material';

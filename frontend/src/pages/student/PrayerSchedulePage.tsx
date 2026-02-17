@@ -11,13 +11,11 @@ import {
   List,
   ListItem,
   Divider,
-  Avatar,
   Paper,
   useTheme,
   useMediaQuery,
   Stack,
 } from '@mui/material';
-import Grid from '@mui/material/Grid';
 import {
   ArrowBack as ArrowBackIcon,
   Logout as LogoutIcon,
@@ -29,7 +27,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const PrayerSchedulePage: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));

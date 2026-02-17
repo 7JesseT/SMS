@@ -45,7 +45,7 @@ import {
 import type { PrayerSchedule, PrayerScheduleInput } from '../../types/entities.types';
 
 export const AdminPrayerScheduleManagementPage: React.FC = () => {
-  const { user, getCurrentUserData, logout } = useAuth() as any;
+  const { getCurrentUserData, logout } = useAuth() as any;
   const currentUserData = getCurrentUserData();
   const navigate = useNavigate();
   const theme = useTheme();

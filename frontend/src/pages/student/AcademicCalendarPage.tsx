@@ -30,7 +30,7 @@ import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 
 const AcademicCalendarPage: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));

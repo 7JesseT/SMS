@@ -21,7 +21,6 @@ import {
   Logout as LogoutIcon,
   ArrowBack as ArrowBackIcon,
   Email as EmailIcon,
-  School as SchoolIcon,
   Class as ClassIcon,
   Subject as SubjectIcon,
   CalendarToday as CalendarIcon,

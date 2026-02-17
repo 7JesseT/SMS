@@ -28,7 +28,6 @@ const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { loginAdmin } = useAuth() as ReturnType<typeof useAuth> & {
     loginAdmin: (email: string, password: string) => Promise<void>;
   };

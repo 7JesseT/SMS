@@ -18,7 +18,6 @@ import {
   Stack,
   useTheme,
   useMediaQuery,
-  IconButton,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { 
@@ -29,6 +28,7 @@ import {
   Assessment as AssessmentIcon,
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import type { Student } from '../../types/student.types';
 import { format } from 'date-fns';

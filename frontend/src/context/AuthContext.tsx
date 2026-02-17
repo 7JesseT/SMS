@@ -42,6 +42,7 @@ const transformUserResponse = (data: AuthResponse): AuthUser => {
   localStorage.setItem('userRole', role);
   
   return {
+    _id: user._id,
     id: user._id,
     email: user.email || user.rollNum?.toString() || '',
     role: role,

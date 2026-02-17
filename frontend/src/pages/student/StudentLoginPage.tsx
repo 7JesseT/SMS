@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import {
   Box,
-  Card,
-  CardContent,
   TextField,
   Button,
   Typography,
@@ -30,7 +28,6 @@ const StudentLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { loginStudent } = useAuth() as ReturnType<typeof useAuth> & {
     loginStudent: (rollNum: number, studentName: string, password: string) => Promise<void>;
   };

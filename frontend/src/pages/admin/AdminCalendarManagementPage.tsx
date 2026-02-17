@@ -50,17 +50,8 @@ import {
 } from '../../hooks/useAdminApi';
 import type { AcademicCalendar, AcademicCalendarInput } from '../../types/entities.types';
 
-const eventTypeColors: Record<string, 'primary' | 'success' | 'error' | 'warning' | 'info'> = {
-  Exam: 'error',
-  Examination: 'error',
-  Holiday: 'success',
-  Event: 'primary',
-  Term: 'warning',
-  Other: 'info',
-};
-
 export const AdminCalendarManagementPage: React.FC = () => {
-  const { user, getCurrentUserData, logout } = useAuth() as any;
+  const { getCurrentUserData, logout } = useAuth() as any;
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -107,7 +98,7 @@ export const AdminCalendarManagementPage: React.FC = () => {
       case 'Holiday':
         return 'success';
       case 'Event':
-        return 'primary';
+        return 'info';
       case 'Term':
         return 'warning';
       default:

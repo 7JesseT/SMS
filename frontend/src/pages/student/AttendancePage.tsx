@@ -12,7 +12,6 @@ import {
   TableRow,
   Paper,
   Chip,
-  Avatar,
   LinearProgress,
   Select,
   MenuItem,
@@ -23,7 +22,6 @@ import {
   useTheme,
   useMediaQuery,
   Stack,
-  Divider,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import {

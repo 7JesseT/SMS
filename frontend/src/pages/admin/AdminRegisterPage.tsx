@@ -30,7 +30,6 @@ const AdminRegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [formData, setFormData] = useState({
     name: '',
     email: '',

@@ -47,7 +47,6 @@ import {
   useAllSubjects
 } from '../../services/teacherApi';
 import type { Student } from '../../types/student.types';
-import type { Subject } from '../../types/entities.types';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -74,9 +73,9 @@ export const MarksInputPage: React.FC = () => {
   const teacherId = authUser.id || authUser._id || currentUser?._id;
   
   // Fetch data using TanStack Query hooks
-  const { data: subjects = [], isLoading: subjectsLoading, error: subjectsError } = useTeacherSubjects(schoolId, teacherId);
-  const { data: allSubjects = [], isLoading: allSubjectsLoading, error: allSubjectsError } = useAllSubjects(schoolId);
-  const { data: allStudents = [], isLoading: studentsLoading, error: studentsError } = useSchoolStudents(schoolId);
+  const { data: subjects = [], isLoading: subjectsLoading } = useTeacherSubjects(schoolId, teacherId);
+  const { data: allSubjects = [], isLoading: allSubjectsLoading } = useAllSubjects(schoolId);
+  const { data: allStudents = [], isLoading: studentsLoading } = useSchoolStudents(schoolId);
   
   // State management
   const [selectedSubject, setSelectedSubject] = useState('');
@@ -92,7 +91,7 @@ export const MarksInputPage: React.FC = () => {
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   
   // Get class ID for selected subject
-  const selectedSubjectData = subjects.find((s) => s._id === selectedSubject);
+  const selectedSubjectData = subjects.find((s: any) => s._id === selectedSubject);
   const classId = selectedSubjectData 
     ? (typeof selectedSubjectData.sclassName === 'string' 
         ? selectedSubjectData.sclassName 
@@ -209,7 +208,7 @@ export const MarksInputPage: React.FC = () => {
     };
 
     bulkUpdateMutation.mutate(payload, {
-      onSuccess: (response) => {
+      onSuccess: () => {
         setSuccess('Marks updated successfully!');
         setExamName('');
         setMarkEntries((prev) => prev.map((entry) => ({ ...entry, marksObtained: 0 })));
@@ -241,13 +240,13 @@ export const MarksInputPage: React.FC = () => {
       let className: string;
 
       if (useCustomSubject) {
-        const subject = allSubjects.find(s => s._id === customSubjectId);
+        const subject = allSubjects.find((s: any) => s._id === customSubjectId);
         subjectName = subject?.subName || customSubjectName || 'Unknown Subject';
         className = typeof subject?.sclassName === 'string' 
           ? subject.sclassName 
           : subject?.sclassName?.sclassName || 'Custom Entry';
       } else {
-        const subject = subjects.find(s => s._id === selectedSubject);
+        const subject = subjects.find((s: any) => s._id === selectedSubject);
         subjectName = subject?.subName || 'Unknown Subject';
         className = typeof subject?.sclassName === 'string' 
           ? subject.sclassName 
@@ -365,7 +364,7 @@ export const MarksInputPage: React.FC = () => {
       const spacing = 10;
       let xPos = 14;
       
-      stats.forEach((stat, index) => {
+      stats.forEach((stat) => {
         // Draw gradient box effect
         doc.setFillColor(102, 126, 234);
         doc.roundedRect(xPos, yPos, boxWidth, boxHeight, 3, 3, 'F');
@@ -571,7 +570,7 @@ export const MarksInputPage: React.FC = () => {
                           No subjects assigned to you
                         </MenuItem>
                       ) : (
-                        subjects.map((subject) => (
+                        subjects.map((subject: any) => (
                           <MenuItem key={subject._id} value={subject._id}>
                             {subject.subName} ({typeof subject.sclassName === 'string' 
                               ? subject.sclassName 

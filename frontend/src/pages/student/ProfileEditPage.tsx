@@ -11,7 +11,6 @@ import {
   CircularProgress,
   Container,
   IconButton,
-  Paper,
   Stack,
   useTheme,
   useMediaQuery,

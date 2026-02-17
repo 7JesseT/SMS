@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Card,
@@ -7,7 +7,6 @@ import {
   Avatar,
   Chip,
   Button,
-  TextField,
   Alert,
   CircularProgress,
   Divider,
@@ -16,28 +15,23 @@ import {
   Stack,
   useTheme,
   useMediaQuery,
-  IconButton,
-  Tooltip,
 } from '@mui/material';
 import Grid from "@mui/material/Grid";
 import {
   Edit as EditIcon,
-  Save as SaveIcon,
-  Cancel as CancelIcon,
   Person as PersonIcon,
   Logout as LogoutIcon,
   ArrowBack as ArrowBackIcon,
   CalendarToday as CalendarIcon,
   Home as HomeIcon,
   People as GuardianIcon,
-  Photo as PhotoIcon,
   Assessment as GradesIcon,
   School as SchoolIcon,
   ContactMail as ContactIcon,
   CheckCircle as CheckCircleIcon,
   TrendingUp as TrendingUpIcon,
 } from '@mui/icons-material';
-import { useStudentDetails, useUpdateStudentProfile } from '../../services/studentApi';
+import { useStudentDetails } from '../../services/studentApi';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -49,7 +43,6 @@ const ProfilePage: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { data: student, isLoading, error: fetchError } = useStudentDetails(user?.id);
-  const updateProfile = useUpdateStudentProfile();
   
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');

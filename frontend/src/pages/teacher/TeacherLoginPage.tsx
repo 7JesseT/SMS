@@ -28,7 +28,6 @@ const TeacherLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const { loginTeacher } = useAuth() as ReturnType<typeof useAuth> & {
     loginTeacher: (email: string, password: string) => Promise<void>;
   };

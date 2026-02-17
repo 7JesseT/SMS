@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Paper,
@@ -11,7 +11,6 @@ import {
   Container,
   Button,
   Stack,
-  useTheme,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import {
@@ -24,7 +23,6 @@ import { format } from 'date-fns';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTeacherAcademicCalendar } from '../../services/teacherApi';
-import type { AcademicCalendar } from '../../types/entities.types';
 
 const eventTypeColors: Record<string, 'primary' | 'success' | 'error' | 'warning' | 'info'> = {
   Exam: 'error',
@@ -35,9 +33,8 @@ const eventTypeColors: Record<string, 'primary' | 'success' | 'error' | 'warning
 };
 
 export const TeacherCalendarPage: React.FC = () => {
-  const { user, logout, getCurrentUserData } = useAuth() as any;
+  const { logout, getCurrentUserData } = useAuth() as any;
   const navigate = useNavigate();
-  const theme = useTheme();
   
   // Get schoolId from currentUser in localStorage
   const currentUser = getCurrentUserData();
